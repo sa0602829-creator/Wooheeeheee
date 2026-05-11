@@ -254,6 +254,29 @@ textarea::placeholder{color:#C0B09A}
 .rdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.68rem;padding:.07rem .22rem;border-radius:4px}
 .rdel:hover{background:var(--red);color:#fff}
 
+/* ── BPM GUIDE ── */
+.bpm-guide{display:none;background:var(--wood);border-radius:12px;padding:.6rem .85rem;display:none;flex-direction:row;align-items:center;justify-content:center;gap:.6rem;flex-wrap:wrap}
+.bg-item{font-family:'Noto Serif KR',serif;font-size:.82rem;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:.3rem;padding:.3rem .55rem;border-radius:8px}
+.bg-item strong{color:var(--gold2);font-size:.95rem}
+.bg-in{background:rgba(42,112,72,.35)}
+.bg-ex{background:rgba(196,136,42,.25)}
+.bg-syl{background:rgba(42,80,138,.35)}
+.bg-beat{background:rgba(255,255,255,.08)}
+.bg-sep{color:rgba(255,255,255,.3);font-size:1.1rem}
+
+/* ── RHYTHM GAME ── */
+.rhythm-wrap{position:relative;width:100%;height:80px;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:.5rem}
+.rhythm-track{position:absolute;top:0;left:0;right:0;bottom:0}
+/* 중앙 판정선 */
+.rhythm-judge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;border:3px solid var(--gold);background:rgba(196,136,42,.12);display:flex;align-items:center;justify-content:center;z-index:5}
+.rhythm-judge-inner{width:28px;height:28px;border-radius:50%;background:rgba(196,136,42,.25);border:2px solid var(--gold2)}
+/* 떨어지는 원 */
+.rhythm-ball{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Noto Serif KR',serif;z-index:4;transition:none;pointer-events:none}
+/* 판정 flash */
+.rhythm-flash{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;opacity:0;pointer-events:none;z-index:6}
+.rhythm-flash.show{animation:rflash .35s ease-out forwards}
+@keyframes rflash{0%{opacity:.9;transform:translate(-50%,-50%) scale(.8)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.2)}}
+
 /* ── POPUP ── */
 .fb-overlay{position:fixed;inset:0;pointer-events:none;z-index:999;display:flex;align-items:center;justify-content:center}
 .fb-pop{font-family:'Noto Serif KR',serif;font-weight:900;font-size:4.2rem;opacity:0;transform:scale(.4);pointer-events:none;white-space:nowrap;text-shadow:0 6px 24px rgba(0,0,0,.18)}
@@ -404,6 +427,16 @@ textarea::placeholder{color:#C0B09A}
   <div class="mic-warning" id="micWarning">
     🎤 마이크를 연결해야 훈련이 시작됩니다.<br>
     <span style="font-size:.74rem;font-weight:400;color:var(--wood2)">마이크 없이는 점수를 드릴 수 없어요.</span>
+  </div>
+
+  <!-- BPM 가이드 -->
+  <div class="bpm-guide" id="bpmGuide" style="display:none"></div>
+
+  <!-- 리듬 게임 판정 영역 -->
+  <div class="rhythm-wrap" id="rhythmWrap" style="display:none">
+    <div class="rhythm-track" id="rhythmTrack"></div>
+    <div class="rhythm-judge"><div class="rhythm-judge-inner"></div></div>
+    <div class="rhythm-flash" id="rhythmFlash"></div>
   </div>
 
   <!-- 1단계: 호흡 -->
@@ -676,8 +709,9 @@ function beep(type){
 function startMetro(){
   metroOn=true;beatN=0;
   var b=document.getElementById('metroBtn');b.textContent='⏹ 정지';b.classList.add('go');
-  if(micOn)document.getElementById('sessBtn').disabled=false;
+  document.getElementById('sessBtn').disabled=false;
   startTimer();
+  updateBpmGuide();
 }
 function stopMetro(){
   metroOn=false;clearInterval(metroTimer);
@@ -685,6 +719,7 @@ function stopMetro(){
   document.getElementById('sessBtn').disabled=true;
   document.getElementById('pendG').style.transform='rotate(0deg)';
   buildDots();if(sessOn)endSess();
+  document.getElementById('bpmGuide').style.display='none';
 }
 function startTimer(){metroTimer=setInterval(onBeat,(60/bpm)*1000);}
 function reMetro(){if(metroOn){clearInterval(metroTimer);startTimer();}}
@@ -716,8 +751,63 @@ function onBeat(){
 
   if(sessOn){
     if(ST[stage].isBreath)onBreathBeat();
-    else openBeatWindow();
+    else{
+      spawnRhythmBall();
+      openBeatWindow();
+    }
   }
+}
+
+/* ── RHYTHM BALL ── */
+var balls=[];
+var rhythmAnimId=null;
+
+function spawnRhythmBall(){
+  var spacing=bpm>100?1:bpm>70?2:3;
+  if((beatsInSess)%spacing!==0)return; // spacing과 맞을때만
+  var track=document.getElementById('rhythmTrack');if(!track)return;
+  var wrapH=80;
+  // 볼 크기
+  var sz=44;
+  // 현재 음절 글자
+  var nextIdx=sylIdx;
+  while(nextIdx<syls.length&&syls[nextIdx].sp)nextIdx++;
+  var ch=nextIdx<syls.length?syls[nextIdx].ch:'·';
+  // 색
+  var colors=['#C4882A','#2A7048','#2A508A','#8A2828'];
+  var col=colors[nextIdx%colors.length];
+  var ball=document.createElement('div');
+  ball.className='rhythm-ball';
+  ball.style.cssText='width:'+sz+'px;height:'+sz+'px;background:'+col+';border:3px solid rgba(255,255,255,.3);color:#fff;font-size:1.1rem;top:2px;left:calc(50% - '+Math.floor(sz/2)+'px);';
+  ball.textContent=ch;
+  track.appendChild(ball);
+  // 이동 지속시간 = 박자 간격 * spacing (공이 판정선 도달 시간)
+  var duration=(60/bpm)*spacing*1000;
+  var startTime=performance.now();
+  var startY=2;
+  var endY=wrapH-sz-2;
+  var midY=(wrapH-sz)/2; // 판정선 위치
+  var judged=false;
+  function animBall(now){
+    var elapsed=now-startTime;
+    var progress=elapsed/duration;
+    if(progress>=1){ball.remove();return;}
+    var y=startY+(endY-startY)*progress;
+    ball.style.top=Math.round(y)+'px';
+    // 판정선 근처 도달하면 flash 효과
+    if(!judged&&Math.abs(y-midY)<10){
+      judged=true;
+    }
+    requestAnimationFrame(animBall);
+  }
+  requestAnimationFrame(animBall);
+}
+
+function showRhythmFlash(col){
+  var fl=document.getElementById('rhythmFlash');if(!fl)return;
+  fl.style.width='52px';fl.style.height='52px';
+  fl.style.background=col;fl.style.border='3px solid '+col;
+  fl.classList.remove('show');void fl.offsetWidth;fl.classList.add('show');
 }
 
 /* ── BEAT WINDOW (채점 핵심) ── */
@@ -738,6 +828,19 @@ function openBeatWindow(){
   if(sylIdx>=syls.length){endSess();return;}
   beatTotal++;
 
+  // 마이크 없으면 창 안 열고 그냥 글자만 넘김
+  if(!micOn){
+    beatWindowOpen=false;
+    // 글자만 자동으로 넘김 (점수 없음)
+    var s=syls[sylIdx];if(s&&!s.sp){
+      var el=document.getElementById('sy'+sylIdx);
+      if(el){el.classList.remove('cur');el.classList.add('done');}
+      sylIdx++;
+      while(sylIdx<syls.length&&syls[sylIdx].sp)sylIdx++;
+      updateK();
+    }
+    return;
+  }
   // 창 닫기 타이머
   if(beatWindowTimer)clearTimeout(beatWindowTimer);
   beatWindowTimer=setTimeout(function(){
@@ -788,6 +891,7 @@ function onSylSuccess(acc){
   beep(beepType);
   showFeedback(acc,true,lbl,col,msg,cls);
   popFb(lbl,col);
+  showRhythmFlash(col);
   var el=document.getElementById('sy'+sylIdx);
   if(el){el.classList.remove('cur');el.classList.add('done');}
   sylIdx++;
@@ -807,6 +911,7 @@ function onSylFail(reason){
     beep('miss');
     showFeedback(0,false,'놓침','#8A2828',msg,cls);
   }
+  showRhythmFlash('#8A2828');
   combo=0;
   var el=document.getElementById('sy'+sylIdx);
   if(el){el.classList.remove('cur');el.classList.add('miss');}
@@ -830,8 +935,10 @@ function showFeedback(timingAcc,volOk,lbl,col,msg,cls){
 
 /* ── SESSION ── */
 function startSess(){
-  if(!metroOn||!micOn)return;
+  if(!metroOn)return;
+  if(!micOn){setMsg('🎤 마이크를 연결하면 점수 측정이 됩니다. 지금은 메트로놈만 작동합니다.','warn');}
   sessOn=true;beatsInSess=0;sylIdx=0;breathBeat=0;beatWindowOpen=false;
+  var track=document.getElementById('rhythmTrack');if(track)track.innerHTML='';
   if(!ST[stage].isBreath){
     totalSyl=syls.filter(function(s){return !s.sp;}).length;
     hitSyl=0;combo=0;beatHits=0;beatTotal=0;
@@ -943,8 +1050,11 @@ function loadStage(){
   var isBreath=!!ST[stage].isBreath;
   document.getElementById('breathCard').style.display=isBreath?'':'none';
   document.getElementById('trainCard').style.display=isBreath?'none':'';
+  var rw=document.getElementById('rhythmWrap');
+  if(rw)rw.style.display=metroOn&&!isBreath?'':'none';
   if(isBreath){buildBreathGroups();setBreathIdle();}
   else{buildTaskSel();loadTask();}
+  if(metroOn)updateBpmGuide();
 }
 function buildTaskSel(){
   var sel=document.getElementById('taskSel');sel.innerHTML='';
@@ -963,6 +1073,7 @@ function setBpm(v){
   bpm=Math.max(40,Math.min(160,v));
   document.getElementById('bpmNum').textContent=bpm;
   document.getElementById('bpmSl').value=bpm;
+  if(metroOn) updateBpmGuide();
 }
 function tap(){
   var now=Date.now();
@@ -1049,14 +1160,13 @@ function showReport(){
 /* ── MIC ── */
 function updateMicWarning(){
   var w=document.getElementById('micWarning');
-  var sb=document.getElementById('sessBtn');
   if(!micOn){
     w.classList.add('show');
-    sb.disabled=true;
   }else{
     w.classList.remove('show');
-    if(metroOn)sb.disabled=false;
   }
+  // 세션 버튼은 메트로놈만 있으면 활성화
+  if(metroOn) document.getElementById('sessBtn').disabled=false;
 }
 function startMic(){
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1202,6 +1312,33 @@ function renderAttendance(){
   document.getElementById('streakN').textContent=streak;
   document.getElementById('streakDays').textContent=streak;
   document.getElementById('streakMsg').textContent=streak>0?streak+'일째 훈련 중! 화이팅 💪':'오늘 첫 훈련을 시작해보세요';
+}
+
+/* ── BPM GUIDE ── */
+function updateBpmGuide(){
+  var g=document.getElementById('bpmGuide');
+  if(!g)return;
+  g.style.display='flex';
+  var rw=document.getElementById('rhythmWrap');
+  if(rw)rw.style.display='';
+  var secPerBeat=(60/bpm).toFixed(2);
+  var stage_=ST[stage];
+  var html='';
+  if(stage_&&stage_.isBreath){
+    var t=stage_.tasks[taskIdx]||stage_.tasks[0];
+    var inSec=(t.inhale*60/bpm).toFixed(1);
+    var exSec=(t.exhale*60/bpm).toFixed(1);
+    html='<span class="bg-item bg-in">🌬 들이마시기 <strong>'+t.inhale+'박</strong> = <strong>'+inSec+'초</strong></span>'
+        +'<span class="bg-sep">→</span>'
+        +'<span class="bg-item bg-ex">💨 내쉬기 <strong>'+t.exhale+'박</strong> = <strong>'+exSec+'초</strong></span>';
+  }else{
+    var spacing=bpm>100?1:bpm>70?2:3;
+    var sylSec=(spacing*60/bpm).toFixed(2);
+    html='<span class="bg-item bg-syl">🗣 음절 1개마다 <strong>'+spacing+'박</strong> = <strong>'+sylSec+'초</strong></span>'
+        +'<span class="bg-sep"></span>'
+        +'<span class="bg-item bg-beat">🥁 1박 = <strong>'+secPerBeat+'초</strong></span>';
+  }
+  g.innerHTML=html;
 }
 
 init();
