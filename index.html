@@ -12,222 +12,266 @@
   --text:#1E160C;--muted:#8A7060;--green:#2A7048;--red:#8A2828;--sh:rgba(62,34,8,.1);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{font-size:18px}
-body{background:var(--bg);color:var(--text);font-family:'Noto Serif KR',serif;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:3rem}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--text);font-family:'Noto Serif KR',serif;
+  max-width:480px;margin:0 auto;
+  display:flex;flex-direction:column;
+}
 
-.topbar{background:var(--wood);padding:1rem 1.1rem .8rem;display:flex;align-items:center;justify-content:space-between}
-.app-name{color:var(--gold2);font-size:1.35rem;font-weight:900;letter-spacing:.06em}
-.app-desc{color:rgba(224,170,70,.4);font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.14em;margin-top:.1rem}
-.streak-badge{background:rgba(255,255,255,.1);border:1.5px solid var(--gold);border-radius:12px;padding:.3rem .75rem;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--gold2);display:flex;align-items:center;gap:.3rem}
+/* ── TOP BAR ── */
+.topbar{
+  background:var(--wood);
+  padding:.6rem 1rem .5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.app-name{color:var(--gold2);font-size:1.3rem;font-weight:900;letter-spacing:.06em}
+.app-desc{color:rgba(224,170,70,.4);font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.12em}
+.streak-badge{background:rgba(255,255,255,.1);border:1.5px solid var(--gold);border-radius:12px;padding:.32rem .8rem;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--gold2);display:flex;align-items:center;gap:.28rem}
 
-.stage-row{display:flex;gap:.4rem;padding:.7rem 1rem .5rem;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch}
+/* ── STAGE CHIPS ── */
+.stage-row{
+  display:flex;gap:.35rem;padding:.5rem .9rem .4rem;
+  overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);
+  -webkit-overflow-scrolling:touch;flex-shrink:0;
+}
 .stage-row::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:.32rem .75rem;border-radius:18px;font-family:'DM Mono',monospace;font-size:.62rem;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);transition:all .15s;white-space:nowrap;font-weight:500}
+.chip{flex-shrink:0;padding:.26rem .65rem;border-radius:14px;font-family:'DM Mono',monospace;font-size:.7rem;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);white-space:nowrap;font-weight:600;transition:all .14s}
 .chip.on{background:var(--wood);border-color:var(--gold);color:var(--gold2)}
+.chip{padding:.38rem .85rem}
 
-.main{padding:.8rem .9rem;display:flex;flex-direction:column;gap:.85rem}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.15rem;box-shadow:0 3px 16px var(--sh)}
+/* ── SCROLLABLE BODY ── */
+.scroll-body{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;
+  padding:.7rem .85rem .5rem;
+  gap:.7rem;
+}
+.scroll-body::-webkit-scrollbar{width:3px}
+.scroll-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-/* ── METRO ── */
-.metro-grid{display:grid;grid-template-columns:64px 1fr 90px;gap:.65rem;align-items:center}
-.cue-col{display:flex;flex-direction:column;gap:.42rem}
-.cue-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.52rem .32rem;display:flex;flex-direction:column;align-items:center;gap:.16rem;cursor:pointer;transition:all .13s}
+/* ── BOTTOM BAR (fixed) ── */
+.bottom-bar{
+  flex-shrink:0;
+  background:var(--card);
+  border-top:1px solid var(--border);
+  padding:.6rem .85rem .7rem;
+  display:flex;flex-direction:column;gap:.45rem;
+  box-shadow:0 -3px 12px var(--sh);
+}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.9rem 1rem;box-shadow:0 2px 10px var(--sh)}
+
+/* ── TOP METRO STRIP (compact horizontal) ── */
+.metro-strip{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:.7rem .9rem;
+  box-shadow:0 2px 10px var(--sh);
+}
+/* SVG */
+.metro-svg-box{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+/* BPM display */
+.metro-bpm{display:flex;flex-direction:column;align-items:center;gap:.1rem;flex-shrink:0}
+.bpm-num{font-family:'DM Mono',monospace;font-size:2.6rem;font-weight:500;color:var(--text);line-height:1}
+.bpm-unit{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
+.pm-row{display:flex;gap:.28rem;margin-top:.3rem}
+.pmb{width:36px;height:36px;background:var(--wood);border:none;border-radius:50%;color:var(--gold2);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(62,34,8,.3);transition:all .1s}
+.pmb:active{transform:scale(.88)}
+/* CUE + controls right side */
+.metro-right{flex:1;display:flex;flex-direction:column;gap:.42rem}
+.cue-row{display:flex;gap:.35rem}
+.cue-btn{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:.38rem .2rem;display:flex;flex-direction:column;align-items:center;gap:.1rem;cursor:pointer;transition:all .12s}
 .cue-btn.on{background:var(--wood);border-color:var(--gold)}
 .cue-btn.on .ci{color:var(--gold2)}.cue-btn.on .cl{color:var(--gold2)}
-.ci{font-size:1.2rem;color:var(--muted)}.cl{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);text-align:center}
-.svg-wrap{display:flex;flex-direction:column;align-items:center;gap:.45rem}
-.bpm-col{display:flex;flex-direction:column;gap:.42rem}
-.bpm-box{background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:.65rem .72rem}
-.bpm-lbl{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.1rem}
-.bpm-num{font-family:'DM Mono',monospace;font-size:2.2rem;font-weight:500;color:var(--text);line-height:1}
-.bpm-unit{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted)}
-.pm-row{display:flex;gap:.3rem;margin-top:.4rem;align-items:center}
-.pmb{width:30px;height:30px;background:var(--wood);border:none;border-radius:50%;color:var(--gold2);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(62,34,8,.3);flex-shrink:0;transition:all .1s}
-.pmb:active{transform:scale(.88)}
-.tapb{flex:1;padding:.28rem .15rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);cursor:pointer;text-align:center;line-height:1.45}
-.vol-box{background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:.52rem .72rem}
-.vol-lbl{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.3rem}
+.ci{font-size:1.4rem;color:var(--muted)}.cl{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center}
+/* BPM slider */
+.bpm-slider-row{display:flex;align-items:center;gap:.4rem}
+.bpm-slider-row span{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--muted);min-width:18px;text-align:center}
 input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--wood);border-radius:50%;border:2px solid var(--gold);cursor:pointer}
-.dots{display:flex;gap:5px;justify-content:center}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .05s}
-.dot.lit{background:var(--gold);transform:scale(1.4);box-shadow:0 0 6px var(--gold2)}
-.dot.lit.acc{background:var(--wood2);box-shadow:0 0 9px var(--gold)}
-.slider-row{display:flex;align-items:center;gap:.5rem;margin-top:.65rem}
-.slider-row span{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);min-width:20px;text-align:center}
-.slider-row input{flex:1}
-.act-row{display:flex;gap:.55rem;margin-top:.72rem}
-.abtn{flex:1;padding:.72rem;border-radius:13px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Noto Serif KR',serif;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.28rem;transition:all .13s;box-shadow:0 2px 6px var(--sh)}
+/* tap + vol row */
+.ctrl-row{display:flex;gap:.35rem;align-items:center}
+.tapb{flex:1;padding:.4rem .15rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);cursor:pointer;text-align:center;line-height:1.4}
+.vol-icon{font-size:.9rem;color:var(--muted)}
+.vol-sl-wrap{flex:2}
+
+/* Beat dots */
+.dots{display:flex;gap:4px;justify-content:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:all .05s}
+.dot.lit{background:var(--gold);transform:scale(1.4);box-shadow:0 0 5px var(--gold2)}
+.dot.lit.acc{background:var(--wood2);box-shadow:0 0 8px var(--gold)}
+
+/* ── MIC / REC BUTTONS ── */
+.mic-row{display:flex;gap:.5rem}
+.abtn{flex:1;padding:.85rem;border-radius:14px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.25rem;transition:all .12s;box-shadow:0 2px 5px var(--sh)}
 .abtn:active{transform:scale(.97)}
 .abtn.go{background:var(--wood);border-color:var(--gold);color:var(--gold2)}
 .abtn.mic-on{background:var(--green);border-color:var(--green);color:#fff}
 .abtn.rec-on{background:var(--red);border-color:var(--red);color:#fff}
 
-/* ── MIC REQUIRED WARNING ── */
-.mic-warning{background:#FFF4E0;border:2px solid var(--gold);border-radius:14px;padding:.85rem 1rem;text-align:center;font-size:.88rem;color:var(--wood2);font-weight:600;line-height:1.6;display:none}
+/* Vol live meter */
+.vol-live{display:none;flex-direction:column;gap:.32rem}
+.vol-live-row{display:flex;align-items:center;gap:.45rem}
+.vl-lbl{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);min-width:58px}
+.vl-track{flex:1;height:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;overflow:hidden;position:relative}
+.vl-fill{height:100%;width:0%;border-radius:5px;transition:width .06s}
+.vl-thresh{position:absolute;top:0;bottom:0;width:2px;background:var(--gold);opacity:.9}
+.vl-val{font-family:'DM Mono',monospace;font-size:.78rem;min-width:78px;text-align:right;font-weight:600}
+.vol-hint{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center}
+
+/* ── MIC WARNING ── */
+.mic-warning{display:none;background:#FFF4E0;border:2px solid var(--gold);border-radius:14px;padding:.85rem 1rem;text-align:center;font-size:1rem;color:var(--wood2);font-weight:600;line-height:1.6}
 .mic-warning.show{display:block}
 
-/* ── VOLUME METER (real-time) ── */
-.vol-live{display:none;flex-direction:column;gap:.4rem;margin-top:.55rem}
-.vol-live-row{display:flex;align-items:center;gap:.5rem}
-.vl-lbl{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);min-width:52px;font-weight:500}
-.vl-track{flex:1;height:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;overflow:hidden;position:relative}
-.vl-fill{height:100%;width:0%;border-radius:6px;transition:width .06s;background:var(--green)}
-.vl-thresh{position:absolute;top:0;bottom:0;width:2px;background:var(--gold);opacity:.8}
-.vl-val{font-family:'DM Mono',monospace;font-size:.72rem;min-width:58px;text-align:right;font-weight:600}
-.vol-hint{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-align:center;margin-top:.2rem}
-
 /* ── BREATHING ── */
-.breath-card{display:flex;flex-direction:column;align-items:center;gap:.85rem;padding:1.3rem 1.15rem}
-.breath-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:150px;height:150px}
-.breath-circle{width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(196,136,42,.15) 0%,rgba(196,136,42,.04) 70%);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;transition:transform .15s;position:relative}
-@keyframes inhaleAnim{0%{transform:scale(1);border-color:var(--gold)}100%{transform:scale(1.38);border-color:var(--green);box-shadow:0 0 28px rgba(42,112,72,.32)}}
-@keyframes exhaleAnim{0%{transform:scale(1.38);border-color:var(--green)}100%{transform:scale(1);border-color:var(--gold);box-shadow:none}}
-.breath-icon{font-size:2.6rem}
-.breath-arrow{position:absolute;font-size:1.6rem;opacity:0;transition:opacity .2s}
+.breath-card{display:flex;flex-direction:column;align-items:center;gap:.65rem;padding:.9rem 1rem}
+.breath-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:170px;height:170px}
+.breath-circle{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(196,136,42,.12) 0%,rgba(196,136,42,.03) 70%);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center}
+@keyframes inhaleAnim{0%{transform:scale(1);border-color:var(--gold)}100%{transform:scale(1.35);border-color:var(--green);box-shadow:0 0 22px rgba(42,112,72,.3)}}
+@keyframes exhaleAnim{0%{transform:scale(1.35);border-color:var(--green)}100%{transform:scale(1);border-color:var(--gold);box-shadow:none}}
+.breath-icon{font-size:3.2rem}
+.breath-arrow{position:absolute;font-size:2rem;opacity:0;transition:opacity .2s}
 .breath-arrow.show{opacity:1}
-.breath-arrow.up{top:-22px}.breath-arrow.down{bottom:-22px}
-.breath-label{font-size:1.25rem;font-weight:700;color:var(--text);text-align:center;min-height:2rem}
-.breath-sub{font-size:.78rem;color:var(--muted);text-align:center;line-height:1.55}
-
-/* Beat groups */
-.breath-groups{display:flex;gap:1rem;justify-content:center;align-items:flex-end}
-.breath-group{display:flex;flex-direction:column;align-items:center;gap:.3rem}
-.breath-group-lbl{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.05em}
-.breath-beats-row{display:flex;gap:.4rem}
-.bb{width:16px;height:16px;border-radius:50%;background:var(--border);border:2px solid var(--border);transition:all .12s}
-.bb.inhale-active{background:var(--green);border-color:var(--green);transform:scale(1.3);box-shadow:0 0 8px rgba(42,112,72,.5)}
-.bb.inhale-done{background:rgba(42,112,72,.35);border-color:var(--green)}
-.bb.exhale-active{background:var(--gold);border-color:var(--gold);transform:scale(1.3);box-shadow:0 0 8px rgba(196,136,42,.5)}
-.bb.exhale-done{background:rgba(196,136,42,.35);border-color:var(--gold)}
+.breath-arrow.up{top:-18px}.breath-arrow.down{bottom:-18px}
+.breath-label{font-size:1.4rem;font-weight:700;color:var(--text);text-align:center;min-height:2rem}
+.breath-sub{font-size:.85rem;color:var(--muted);text-align:center;line-height:1.5}
+.breath-groups{display:flex;gap:.9rem;justify-content:center;align-items:flex-end}
+.breath-group{display:flex;flex-direction:column;align-items:center;gap:.28rem}
+.breath-group-lbl{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);font-weight:600}
+.breath-beats-row{display:flex;gap:.35rem}
+.bb{width:20px;height:20px;border-radius:50%;background:var(--border);border:2px solid var(--border);transition:all .12s}
+.bb.inhale-active{background:var(--green);border-color:var(--green);transform:scale(1.3);box-shadow:0 0 7px rgba(42,112,72,.5)}
+.bb.inhale-done{background:rgba(42,112,72,.3);border-color:var(--green)}
+.bb.exhale-active{background:var(--gold);border-color:var(--gold);transform:scale(1.3);box-shadow:0 0 7px rgba(196,136,42,.5)}
+.bb.exhale-done{background:rgba(196,136,42,.3);border-color:var(--gold)}
 
 /* ── TRAINING ── */
-.train-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
-.train-lbl{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
-.nav-row{display:flex;gap:.3rem}
-.nbtn{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:.18rem .48rem;font-family:'DM Mono',monospace;font-size:.68rem;cursor:pointer;color:var(--muted)}
-.task-sel{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:.42rem .62rem;font-family:'Noto Serif KR',serif;font-size:.9rem;color:var(--text);outline:none;cursor:pointer;margin-bottom:.65rem;font-weight:600}
-.instr{font-size:.8rem;color:var(--muted);line-height:1.65;background:var(--bg);border-radius:10px;padding:.52rem .72rem;border-left:3px solid var(--gold);margin-bottom:.65rem}
+.train-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.train-lbl{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.nav-row{display:flex;gap:.28rem}
+.nbtn{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:.16rem .44rem;font-family:'DM Mono',monospace;font-size:.64rem;cursor:pointer;color:var(--muted)}
+.task-sel{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:.55rem .7rem;font-family:'Noto Serif KR',serif;font-size:1rem;color:var(--text);outline:none;cursor:pointer;margin-bottom:.55rem;font-weight:600}
+.instr{font-size:.9rem;color:var(--muted);line-height:1.65;background:var(--bg);border-radius:9px;padding:.45rem .65rem;border-left:3px solid var(--gold);margin-bottom:.55rem}
 .instr strong{color:var(--wood2)}
-.prog{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;border:1px solid var(--border);margin-bottom:.6rem}
+.prog{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;border:1px solid var(--border);margin-bottom:.5rem}
 .prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
-.karaoke{display:flex;flex-wrap:wrap;gap:.22rem .38rem;align-items:baseline;min-height:80px;padding:.1rem 0 .65rem}
-.syl{display:inline-block;font-size:clamp(1.7rem,5.5vw,2.3rem);font-weight:700;padding:.08rem .22rem;border-radius:7px;color:#C0AC94;transition:color .1s,background .1s,transform .12s;line-height:1.4;position:relative}
-.syl.done{color:var(--green)}.syl.cur{color:var(--text);background:rgba(196,136,42,.14);transform:scale(1.1)}
-.syl.cur::after{content:'';position:absolute;bottom:-4px;left:8%;width:84%;height:3px;background:var(--gold);border-radius:2px;animation:blink .5s ease-in-out infinite alternate}
+
+/* Karaoke — BIG */
+.karaoke{display:flex;flex-wrap:wrap;gap:.22rem .4rem;align-items:baseline;min-height:90px;padding:.08rem 0 .5rem}
+.syl{display:inline-block;font-size:clamp(2rem,7vw,2.8rem);font-weight:700;padding:.07rem .18rem;border-radius:6px;color:#C0AC94;transition:color .1s,background .1s,transform .11s;line-height:1.4;position:relative}
+.syl.done{color:var(--green)}.syl.cur{color:var(--text);background:rgba(196,136,42,.13);transform:scale(1.1)}
+.syl.cur::after{content:'';position:absolute;bottom:-3px;left:8%;width:84%;height:2.5px;background:var(--gold);border-radius:2px;animation:blink .5s ease-in-out infinite alternate}
 @keyframes blink{from{opacity:1}to{opacity:.1}}
 .syl.miss{color:var(--red);text-decoration:line-through;opacity:.5}
 
-/* ── FEEDBACK PANEL ── */
-.fb-panel{display:flex;flex-direction:column;gap:.55rem}
-.fb-row{display:flex;align-items:center;gap:.6rem}
-.fb-lbl{font-family:'DM Mono',monospace;font-size:.64rem;color:var(--muted);min-width:54px;font-weight:500}
-.fb-track{flex:1;height:12px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;overflow:hidden}
-.fb-fill{height:100%;width:0%;border-radius:6px;transition:width .28s,background .28s}
-.fb-val{font-family:'DM Mono',monospace;font-size:.72rem;min-width:54px;text-align:right;font-weight:700;color:var(--muted)}
+/* ── BOTTOM BAR CONTENTS ── */
+/* Feedback meters */
+.fb-meters{display:flex;flex-direction:column;gap:.38rem}
+.fb-row{display:flex;align-items:center;gap:.5rem}
+.fb-lbl{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);min-width:62px;font-weight:600}
+.fb-track{flex:1;height:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;overflow:hidden}
+.fb-fill{height:100%;width:0%;border-radius:5px;transition:width .25s,background .25s}
+.fb-val{font-family:'DM Mono',monospace;font-size:.82rem;min-width:58px;text-align:right;font-weight:700;color:var(--muted)}
 
-/* Criteria info */
-.criteria-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.55rem .75rem;font-size:.72rem;color:var(--muted);line-height:1.7}
-.criteria-box strong{color:var(--wood2)}
-
-/* Big feedback msg */
-.fb-msg-big{font-size:1.1rem;font-weight:700;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:.7rem 1rem;text-align:center;min-height:3.2rem;display:flex;align-items:center;justify-content:center;margin:.5rem 0;transition:all .25s;line-height:1.5}
-.fb-msg-big.perfect{color:#fff;background:var(--gold);border-color:var(--gold);box-shadow:0 4px 16px rgba(196,136,42,.4)}
-.fb-msg-big.good{color:#fff;background:var(--green);border-color:var(--green);box-shadow:0 4px 16px rgba(42,112,72,.3)}
+/* Feedback message */
+.fb-msg-big{font-size:1.15rem;font-weight:700;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.55rem .8rem;text-align:center;transition:all .22s;line-height:1.45;min-height:3.2rem;display:flex;align-items:center;justify-content:center}
+.fb-msg-big.perfect{color:#fff;background:var(--gold);border-color:var(--gold);box-shadow:0 3px 12px rgba(196,136,42,.4)}
+.fb-msg-big.good{color:#fff;background:var(--green);border-color:var(--green);box-shadow:0 3px 12px rgba(42,112,72,.3)}
 .fb-msg-big.warn{color:var(--wood);background:#FFF4E0;border-color:var(--gold2)}
-.fb-msg-big.bad{color:#fff;background:var(--red);border-color:var(--red);box-shadow:0 4px 16px rgba(138,40,40,.3)}
+.fb-msg-big.bad{color:#fff;background:var(--red);border-color:var(--red);box-shadow:0 3px 12px rgba(138,40,40,.3)}
 
-.sess-row{display:flex;gap:.6rem;margin-top:.6rem}
-.sess-btn{flex:2;padding:.8rem;border-radius:14px;border:none;background:var(--wood);color:var(--gold2);font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3rem;box-shadow:0 4px 14px rgba(62,34,8,.28);transition:all .13s;position:relative;overflow:hidden}
-.sess-btn::before{content:'';position:absolute;inset:-3px;border-radius:16px;border:2px solid rgba(224,170,70,.28);animation:glow 2s ease-in-out infinite}
-@keyframes glow{0%,100%{opacity:.25}50%{opacity:.75}}
+/* Session buttons */
+.sess-row{display:flex;gap:.5rem}
+.sess-btn{flex:2;padding:.9rem;border-radius:14px;border:none;background:var(--wood);color:var(--gold2);font-family:'Noto Serif KR',serif;font-size:1.15rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3rem;box-shadow:0 3px 12px rgba(62,34,8,.26);transition:all .12s;position:relative;overflow:hidden}
+.sess-btn::before{content:'';position:absolute;inset:-3px;border-radius:15px;border:2px solid rgba(224,170,70,.25);animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.2}50%{opacity:.7}}
 .sess-btn.run{background:#6A1A1A;color:#FFB0B0}
 .sess-btn:disabled{background:#C8BCA8;color:#9A8E80;box-shadow:none;cursor:not-allowed}
 .sess-btn:disabled::before{display:none}
 .sess-btn:active{transform:scale(.97)}
-.reset-btn{flex:1;padding:.8rem;border-radius:14px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Noto Serif KR',serif;font-size:.88rem;font-weight:600;cursor:pointer}
+.reset-btn{flex:1;padding:.9rem;border-radius:14px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;cursor:pointer}
 
-/* ── STATS ── */
-.stats-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr 1px 1fr;gap:.5rem;align-items:center}
-.stat-div{background:var(--border);height:36px}
+/* ── STATS (in scroll) ── */
+.stats-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr 1px 1fr;gap:.45rem;align-items:center}
+.stat-div{background:var(--border);height:32px}
 .stat-item{text-align:center}
-.stat-val{font-family:'DM Mono',monospace;font-size:1.45rem;color:var(--wood);line-height:1}
-.stat-name{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-top:.18rem}
+.stat-val{font-family:'DM Mono',monospace;font-size:1.6rem;color:var(--wood);line-height:1}
+.stat-name{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:.18rem}
 
 /* ── ATTENDANCE ── */
-.attend-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.7rem;display:flex;align-items:center;gap:.45rem}
-.attend-month{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-left:auto}
-.attend-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.32rem}
-.attend-day-lbl{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--muted);text-align:center;padding-bottom:.2rem}
-.attend-day{width:100%;aspect-ratio:1;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);position:relative;transition:all .2s}
+.attend-title{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.attend-month{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-left:auto}
+.attend-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.28rem}
+.attend-day-lbl{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);text-align:center;padding-bottom:.18rem}
+.attend-day{width:100%;aspect-ratio:1;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);position:relative;transition:all .2s}
 .attend-day.today{border-color:var(--gold);color:var(--gold);font-weight:700}
 .attend-day.stamped{background:var(--wood);border-color:var(--wood)}
 .attend-day.stamped span{display:none}
-.attend-day.stamped::after{content:'✓';font-size:.75rem;font-weight:900;color:var(--gold2)}
-.attend-streak{margin-top:.65rem;background:var(--bg);border-radius:10px;padding:.55rem .72rem;display:flex;align-items:center;gap:.5rem}
-.ast-icon{font-size:1.4rem}
-.ast-text{font-size:.82rem;color:var(--text);font-weight:600}
-.ast-sub{font-size:.7rem;color:var(--muted);margin-top:.08rem}
+.attend-day.stamped::after{content:'✓';font-size:.7rem;font-weight:900;color:var(--gold2)}
+.attend-streak{margin-top:.55rem;background:var(--bg);border-radius:9px;padding:.5rem .65rem;display:flex;align-items:center;gap:.45rem}
+.ast-icon{font-size:1.3rem}.ast-text{font-size:.95rem;color:var(--text);font-weight:600}
+.ast-sub{font-size:.78rem;color:var(--muted);margin-top:.08rem}
 
 /* ── REPORT ── */
-.report{display:none}
-.report.show{display:block}
-.report-title{font-size:.95rem;font-weight:700;color:var(--wood);margin-bottom:.6rem}
-.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-bottom:.55rem}
-.ri{background:var(--bg);border-radius:10px;padding:.52rem .68rem}
-.ri-lbl{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.08em}
-.ri-val{font-family:'DM Mono',monospace;font-size:1.15rem;color:var(--text);margin-top:.1rem;font-weight:500}
-.report-cmt{font-size:.8rem;color:var(--text);line-height:1.65;background:#F0FBF5;border-radius:10px;padding:.55rem .75rem;border-left:3px solid var(--green)}
+.report{display:none}.report.show{display:block}
+.report-title{font-size:1.05rem;font-weight:700;color:var(--wood);margin-bottom:.55rem}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.5rem}
+.ri{background:var(--bg);border-radius:9px;padding:.45rem .6rem}
+.ri-lbl{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.07em}
+.ri-val{font-family:'DM Mono',monospace;font-size:1.3rem;color:var(--text);margin-top:.1rem}
+.report-cmt{font-size:.9rem;color:var(--text);line-height:1.65;background:#F0FBF5;border-radius:9px;padding:.5rem .7rem;border-left:3px solid var(--green)}
 
 /* ── CUSTOM ── */
 .cust-hdr{display:flex;align-items:center;justify-content:space-between}
-.cust-lbl{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
-.ctoggle{font-family:'DM Mono',monospace;font-size:.64rem;color:var(--wood2);background:none;border:1px solid var(--wood2);border-radius:6px;padding:.17rem .46rem;cursor:pointer}
-.cbody{display:none;flex-direction:column;gap:.55rem;margin-top:.65rem}
-.cbody.open{display:flex}
-.hint{font-size:.76rem;color:var(--muted);line-height:1.6;background:var(--bg);border-radius:9px;padding:.5rem .7rem;border-left:3px solid var(--gold)}
+.cust-lbl{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.ctoggle{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--wood2);background:none;border:1px solid var(--wood2);border-radius:6px;padding:.15rem .42rem;cursor:pointer}
+.cbody{display:none;flex-direction:column;gap:.5rem;margin-top:.6rem}.cbody.open{display:flex}
+.hint{font-size:.88rem;color:var(--muted);line-height:1.6;background:var(--bg);border-radius:8px;padding:.46rem .65rem;border-left:3px solid var(--gold)}
 .hint strong{color:var(--wood2)}
-textarea{width:100%;min-height:68px;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:.65rem;font-family:'Noto Serif KR',serif;font-size:.95rem;color:var(--text);resize:vertical;outline:none;line-height:1.6}
+textarea{width:100%;min-height:72px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.7rem;font-family:'Noto Serif KR',serif;font-size:1rem;color:var(--text);resize:vertical;outline:none;line-height:1.6}
 textarea:focus{border-color:var(--gold)}
 textarea::placeholder{color:#C0B09A}
-.prev-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.6rem;min-height:34px;display:flex;flex-wrap:wrap;gap:.1rem .18rem;align-items:center}
-.ps{font-size:.95rem;font-weight:600;padding:.02rem .1rem}
-.ps.wb{margin-left:.28rem;border-left:2px solid var(--gold);padding-left:.24rem}
+.prev-box{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:.55rem;min-height:32px;display:flex;flex-wrap:wrap;gap:.1rem .16rem;align-items:center}
+.ps{font-size:.88rem;font-weight:600;padding:.02rem .08rem}
+.ps.wb{margin-left:.25rem;border-left:2px solid var(--gold);padding-left:.22rem}
 .ps:first-child{margin-left:0;border-left:none}
-.pe{color:var(--border);font-family:'DM Mono',monospace;font-size:.68rem}
-.cb-row{display:flex;gap:.4rem}
-.btn-apply{flex:1;padding:.46rem;background:var(--wood);color:var(--gold2);border:none;border-radius:9px;font-family:'Noto Serif KR',serif;font-size:.82rem;font-weight:700;cursor:pointer}
-.btn-clr{padding:.46rem .8rem;background:var(--bg);color:var(--muted);border:1px solid var(--border);border-radius:9px;font-size:.82rem;cursor:pointer}
+.pe{color:var(--border);font-family:'DM Mono',monospace;font-size:.65rem}
+.cb-row{display:flex;gap:.38rem}
+.btn-apply{flex:1;padding:.58rem;background:var(--wood);color:var(--gold2);border:none;border-radius:10px;font-family:'Noto Serif KR',serif;font-size:.95rem;font-weight:700;cursor:pointer}
+.btn-clr{padding:.58rem .85rem;background:var(--bg);color:var(--muted);border:1px solid var(--border);border-radius:10px;font-size:.95rem;cursor:pointer}
 
 /* ── RECORDINGS ── */
 .rec-area{display:none}
-.rec-title{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.38rem}
-.rec-list{display:flex;flex-direction:column;gap:.3rem;max-height:120px;overflow-y:auto}
-.rec-item{display:flex;align-items:center;gap:.38rem;padding:.38rem .52rem;background:var(--bg);border:1px solid var(--border);border-radius:10px}
-.rl{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text);min-width:80px}
-.rec-item audio{flex:1;height:24px;min-width:0}
-.rd{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--wood2);text-decoration:none;padding:.1rem .32rem;border:1px solid var(--wood2);border-radius:5px}
-.rdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.72rem;padding:.08rem .24rem;border-radius:4px}
+.rec-title{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.09em;margin-bottom:.4rem}
+.rec-list{display:flex;flex-direction:column;gap:.28rem;max-height:110px;overflow-y:auto}
+.rec-item{display:flex;align-items:center;gap:.35rem;padding:.35rem .5rem;background:var(--bg);border:1px solid var(--border);border-radius:9px}
+.rl{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text);min-width:88px}
+.rec-item audio{flex:1;height:22px;min-width:0}
+.rd{font-family:'DM Mono',monospace;font-size:.66rem;color:var(--wood2);text-decoration:none;padding:.09rem .3rem;border:1px solid var(--wood2);border-radius:5px}
+.rdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.68rem;padding:.07rem .22rem;border-radius:4px}
 .rdel:hover{background:var(--red);color:#fff}
 
 /* ── POPUP ── */
 .fb-overlay{position:fixed;inset:0;pointer-events:none;z-index:999;display:flex;align-items:center;justify-content:center}
-.fb-pop{font-family:'Noto Serif KR',serif;font-weight:900;font-size:4.5rem;opacity:0;transform:scale(.4);pointer-events:none;white-space:nowrap;text-shadow:0 6px 24px rgba(0,0,0,.18)}
+.fb-pop{font-family:'Noto Serif KR',serif;font-weight:900;font-size:4.2rem;opacity:0;transform:scale(.4);pointer-events:none;white-space:nowrap;text-shadow:0 6px 24px rgba(0,0,0,.18)}
 .fb-pop.show{animation:fbIn .68s cubic-bezier(.22,1,.36,1) forwards}
-@keyframes fbIn{0%{opacity:0;transform:scale(.4) translateY(20px)}40%{opacity:1;transform:scale(1.12) translateY(-3px)}75%{transform:scale(.99)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04) translateY(-10px)}}
+@keyframes fbIn{0%{opacity:0;transform:scale(.4) translateY(18px)}40%{opacity:1;transform:scale(1.1) translateY(-2px)}75%{transform:scale(.99)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.03) translateY(-8px)}}
 
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-@media(max-width:380px){.stats-grid{grid-template-columns:1fr 1fr}.stat-div{display:none}.metro-grid{grid-template-columns:58px 1fr 82px}}
+@media(max-width:380px){.stats-grid{grid-template-columns:1fr 1fr}.stat-div{display:none}}
 </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
-  <div><div class="app-name">또박톡</div><div class="app-desc">PARKINSON SPEECH THERAPY · RAS</div></div>
+  <div><div class="app-name">또박톡</div><div class="app-desc">PARKINSON SPEECH THERAPY</div></div>
   <div class="streak-badge">🔥 <span id="streakN">0</span>일</div>
 </div>
 
+<!-- STAGE CHIPS -->
 <div class="stage-row" id="stageRow">
   <div class="chip on" data-s="1">1단계 · 호흡</div>
   <div class="chip" data-s="2">2단계 · 발성</div>
@@ -237,18 +281,14 @@ textarea::placeholder{color:#C0B09A}
   <div class="chip" data-s="6">6단계 · 대화</div>
 </div>
 
-<div class="main">
+<!-- SCROLLABLE BODY -->
+<div class="scroll-body">
 
-<!-- 메트로놈 -->
-<div class="card">
-  <div class="metro-grid">
-    <div class="cue-col">
-      <div class="cue-btn on" data-cue="audio"><span class="ci">🔊</span><span class="cl">소리</span></div>
-      <div class="cue-btn" data-cue="visual"><span class="ci">👁</span><span class="cl">시각</span></div>
-      <div class="cue-btn" data-cue="vibration"><span class="ci">📳</span><span class="cl">진동</span></div>
-    </div>
-    <div class="svg-wrap">
-      <svg width="155" height="224" viewBox="0 0 155 224" style="overflow:visible;filter:drop-shadow(0 8px 22px rgba(30,10,0,.46))">
+  <!-- 메트로놈 + 컨트롤 (한 줄) -->
+  <div class="metro-strip">
+    <!-- 메트로놈 SVG -->
+    <div class="metro-svg-box">
+      <svg width="72" height="102" viewBox="0 0 155 224" style="overflow:visible;filter:drop-shadow(0 4px 10px rgba(30,10,0,.4))">
         <defs>
           <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#1C0A02"/><stop offset="14%" stop-color="#582E14"/>
@@ -295,101 +335,172 @@ textarea::placeholder{color:#C0B09A}
           <circle cx="77" cy="16" r="6.5" fill="url(#gg)"/><circle cx="74.8" cy="13.8" r="2" fill="rgba(255,255,255,.4)"/>
         </g>
         <circle cx="144" cy="148" r="9" fill="url(#gg)"/>
-        <circle cx="144" cy="148" r="5.5" fill="url(#gg)" opacity=".7"/>
-        <circle cx="141.5" cy="145.5" r="2.2" fill="rgba(255,255,255,.3)"/>
         <polygon points="7,213 148,213 148,224 7,224" fill="url(#bg2)"/>
         <polygon points="7,224 148,224 143,230 12,230" fill="#0C0602"/>
         <circle cx="77" cy="219" r="7" fill="none" stroke="#C4882A" stroke-width=".8" opacity=".5"/>
-        <text x="77" y="222.5" font-family="serif" font-size="9.5" fill="#C4882A" text-anchor="middle" opacity=".6">𝄞</text>
         <circle id="flashC" cx="77" cy="148" r="0" fill="#C4882A" opacity="0"/>
       </svg>
       <div class="dots" id="dotsEl"></div>
     </div>
-    <div class="bpm-col">
-      <div class="bpm-box">
-        <div class="bpm-lbl">현재 속도</div>
-        <div class="bpm-num" id="bpmNum">60</div>
-        <div class="bpm-unit">BPM</div>
-        <div class="pm-row">
-          <button class="pmb" id="bpmM">−</button>
-          <button class="pmb" id="bpmP">+</button>
-        </div>
-        <button class="tapb" id="tapBtn" style="margin-top:.32rem;width:100%">👆 탭 템포</button>
+
+    <!-- BPM -->
+    <div class="metro-bpm">
+      <div style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.1em">템포</div>
+      <div class="bpm-num" id="bpmNum">60</div>
+      <div class="bpm-unit">BPM</div>
+      <div class="pm-row">
+        <button class="pmb" id="bpmM">−</button>
+        <button class="pmb" id="bpmP">+</button>
       </div>
-      <div class="vol-box">
-        <div class="vol-lbl">메트로놈 볼륨</div>
-        <input type="range" id="volSl" min="0" max="100" value="70">
+    </div>
+
+    <!-- 우측 컨트롤 -->
+    <div class="metro-right">
+      <div class="cue-row">
+        <div class="cue-btn on" data-cue="audio"><span class="ci">🔊</span><span class="cl">소리</span></div>
+        <div class="cue-btn" data-cue="visual"><span class="ci">👁</span><span class="cl">시각</span></div>
+        <div class="cue-btn" data-cue="vibration"><span class="ci">📳</span><span class="cl">진동</span></div>
+      </div>
+      <div class="bpm-slider-row">
+        <span>40</span>
+        <input type="range" id="bpmSl" min="40" max="160" value="60">
+        <span>160</span>
+      </div>
+      <div class="ctrl-row">
+        <button class="tapb" id="tapBtn">👆 탭 템포</button>
+        <span class="vol-icon">🔈</span>
+        <div class="vol-sl-wrap"><input type="range" id="volSl" min="0" max="100" value="70"></div>
       </div>
     </div>
   </div>
-  <div class="slider-row">
-    <span>40</span><input type="range" id="bpmSl" min="40" max="160" value="60"><span>160</span>
-  </div>
-  <div class="act-row">
+
+  <!-- 마이크 / 녹음 버튼 -->
+  <div class="mic-row">
     <button class="abtn" id="metroBtn">▶ 메트로놈</button>
-    <button class="abtn" id="micBtn">🎤 마이크 연결</button>
+    <button class="abtn" id="micBtn">🎤 마이크</button>
     <button class="abtn" id="recBtn" style="display:none">⏺ 녹음</button>
   </div>
 
-  <!-- 실시간 음성 크기 -->
+  <!-- 음성 크기 미터 -->
   <div class="vol-live" id="volLive">
     <div class="vol-live-row">
       <span class="vl-lbl">음성 크기</span>
       <div class="vl-track">
         <div class="vl-fill" id="vlFill"></div>
-        <div class="vl-thresh" id="vlThresh" style="left:35%"></div>
+        <div class="vl-thresh" id="vlThresh" style="left:14%"></div>
       </div>
       <span class="vl-val" id="vlVal">—</span>
     </div>
     <div class="vol-hint">▲ 금색 선 이상이어야 통과</div>
-    <div class="vol-live-row" style="margin-top:.45rem">
+    <div class="vol-live-row">
       <span class="vl-lbl">기준 조절</span>
       <input type="range" id="threshSl" min="5" max="120" value="35" style="flex:1">
-      <span class="vl-val" id="threshVal" style="min-width:58px;text-align:right;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold)">보통</span>
+      <span class="vl-val" id="threshVal" style="min-width:58px;text-align:right;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--gold)">보통</span>
     </div>
-    <div class="vol-hint" style="color:var(--gold)">낮게 = 작은 소리도 통과 &nbsp;·&nbsp; 높게 = 큰 소리만 통과</div>
+    <div class="vol-hint" style="color:var(--gold)">낮게 = 작은 소리도 통과 · 높게 = 큰 소리만 통과</div>
   </div>
-</div>
 
-<!-- 마이크 필요 안내 -->
-<div class="mic-warning" id="micWarning">
-  🎤 마이크를 연결해야 훈련이 시작됩니다.<br>
-  <span style="font-size:.78rem;font-weight:400;color:var(--wood2)">마이크 없이는 점수를 드릴 수 없어요.</span>
-</div>
-
-<!-- 1단계: 호흡 -->
-<div class="card breath-card" id="breathCard">
-  <div class="breath-wrap">
-    <div class="breath-circle" id="breathCircle"><span class="breath-icon" id="breathIcon">🫁</span></div>
-    <span class="breath-arrow up" id="arrowUp">⬆️</span>
-    <span class="breath-arrow down" id="arrowDown">⬇️</span>
+  <!-- 마이크 필요 안내 -->
+  <div class="mic-warning" id="micWarning">
+    🎤 마이크를 연결해야 훈련이 시작됩니다.<br>
+    <span style="font-size:.74rem;font-weight:400;color:var(--wood2)">마이크 없이는 점수를 드릴 수 없어요.</span>
   </div>
-  <div class="breath-label" id="breathLabel">준비</div>
-  <div class="breath-sub" id="breathSub">메트로놈을 시작하고 훈련을 시작하세요</div>
-  <!-- 들이마시기 / 내쉬기 분리 표시 -->
-  <div class="breath-groups" id="breathGroups"></div>
-</div>
 
-<!-- 2~6단계: 훈련 -->
-<div class="card" id="trainCard" style="display:none">
-  <div class="train-top">
-    <span class="train-lbl" id="trainLbl">훈련</span>
-    <div class="nav-row">
-      <button class="nbtn" id="prevT">◀</button>
-      <button class="nbtn" id="nextT">▶</button>
+  <!-- 1단계: 호흡 -->
+  <div class="card breath-card" id="breathCard">
+    <div class="breath-wrap">
+      <div class="breath-circle" id="breathCircle"><span class="breath-icon" id="breathIcon">🫁</span></div>
+      <span class="breath-arrow up" id="arrowUp">⬆️</span>
+      <span class="breath-arrow down" id="arrowDown">⬇️</span>
+    </div>
+    <div class="breath-label" id="breathLabel">준비</div>
+    <div class="breath-sub" id="breathSub">메트로놈과 마이크를 켜고 시작하세요</div>
+    <div class="breath-groups" id="breathGroups"></div>
+  </div>
+
+  <!-- 2~6단계: 훈련 -->
+  <div class="card" id="trainCard" style="display:none">
+    <div class="train-top">
+      <span class="train-lbl" id="trainLbl">훈련</span>
+      <div class="nav-row">
+        <button class="nbtn" id="prevT">◀</button>
+        <button class="nbtn" id="nextT">▶</button>
+      </div>
+    </div>
+    <select class="task-sel" id="taskSel"></select>
+    <div class="instr" id="instrEl"></div>
+    <div class="prog"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="karaoke" id="karaokeEl">
+      <span class="syl" style="color:#C0AC94;font-size:.88rem">메트로놈과 마이크를 켜고 훈련을 시작하세요</span>
     </div>
   </div>
-  <select class="task-sel" id="taskSel"></select>
-  <div class="instr" id="instrEl"></div>
-  <div class="prog"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-  <div class="karaoke" id="karaokeEl">
-    <span class="syl" style="color:#C0AC94;font-size:.9rem">메트로놈과 마이크를 켜고 훈련을 시작하세요</span>
-  </div>
-</div>
 
-<!-- 피드백 -->
-<div class="card">
-  <div class="fb-panel">
+  <!-- 통계 -->
+  <div class="card">
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-val" id="stAcc">—</div><div class="stat-name">정확도</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><div class="stat-val" id="stCombo">0</div><div class="stat-name">연속</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><div class="stat-val" id="stHit">0</div><div class="stat-name">성공</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><div class="stat-val" id="stSess">0</div><div class="stat-name">훈련</div></div>
+    </div>
+  </div>
+
+  <!-- 출석 도장 -->
+  <div class="card">
+    <div class="attend-title">📅 출석 도장 <span class="attend-month" id="attendMonth"></span></div>
+    <div class="attend-grid" id="attendGrid"></div>
+    <div class="attend-streak">
+      <span class="ast-icon">🔥</span>
+      <div>
+        <div class="ast-text"><span id="streakDays">0</span>일 연속 훈련 중!</div>
+        <div class="ast-sub" id="streakMsg">오늘 훈련을 시작해보세요</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 리포트 -->
+  <div class="card report" id="reportCard">
+    <div class="report-title">📋 훈련 결과</div>
+    <div class="report-grid">
+      <div class="ri"><div class="ri-lbl">박자 일치율</div><div class="ri-val" id="rBeat">—</div></div>
+      <div class="ri"><div class="ri-lbl">음성 성공률</div><div class="ri-val" id="rAcc">—</div></div>
+      <div class="ri"><div class="ri-lbl">훈련 BPM</div><div class="ri-val" id="rBpm">—</div></div>
+      <div class="ri"><div class="ri-lbl">단계</div><div class="ri-val" id="rStage">—</div></div>
+    </div>
+    <div class="report-cmt" id="rCmt"></div>
+  </div>
+
+  <!-- 맞춤 문장 -->
+  <div class="card">
+    <div class="cust-hdr">
+      <span class="cust-lbl">맞춤 문장</span>
+      <button class="ctoggle" id="ctoggle">+ 열기</button>
+    </div>
+    <div class="cbody" id="cbody">
+      <div class="hint">단어 사이에 <strong>스페이스</strong>를 넣어 입력하세요.<br>예: <strong>오늘 병원에 갑니다</strong></div>
+      <textarea id="cinput" placeholder="문장을 입력하세요..."></textarea>
+      <div class="prev-box" id="cprev"><span class="pe">입력하면 미리보기가 표시됩니다</span></div>
+      <div class="cb-row">
+        <button class="btn-clr" id="cclr">지우기</button>
+        <button class="btn-apply" id="capply">✓ 이 문장으로 훈련</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 녹음 목록 -->
+  <div class="rec-area" id="recArea">
+    <div class="rec-title">🎧 녹음 목록 — ↓ 버튼으로 저장하세요</div>
+    <div class="rec-list" id="recList"></div>
+  </div>
+
+</div><!-- /scroll-body -->
+
+<!-- 하단 고정 바: 피드백 + 시작 버튼 -->
+<div class="bottom-bar">
+  <div class="fb-meters">
     <div class="fb-row">
       <span class="fb-lbl">박자</span>
       <div class="fb-track"><div class="fb-fill" id="beatFill"></div></div>
@@ -401,91 +512,18 @@ textarea::placeholder{color:#C0B09A}
       <span class="fb-val" id="volFbVal">—</span>
     </div>
   </div>
-
-  <div class="criteria-box" style="margin:.6rem 0">
-    <strong>채점 기준</strong><br>
-    ✅ <strong>박자</strong> — 메트로놈 박자 ±0.3초 안에 소리가 들어와야 통과<br>
-    ✅ <strong>음성 크기</strong> — 충분히 큰 소리여야 통과 (너무 작으면 실패)<br>
-    ❌ 마이크 없으면 점수 없음
-  </div>
-
   <div class="fb-msg-big" id="fbMsg">마이크를 연결하고 훈련을 시작하세요.</div>
-
   <div class="sess-row">
     <button class="sess-btn" id="sessBtn" disabled>◉ 훈련 시작</button>
     <button class="reset-btn" id="resetBtn">↺ 처음</button>
   </div>
 </div>
 
-<!-- 통계 -->
-<div class="card">
-  <div class="stats-grid">
-    <div class="stat-item"><div class="stat-val" id="stAcc">—</div><div class="stat-name">정확도</div></div>
-    <div class="stat-div"></div>
-    <div class="stat-item"><div class="stat-val" id="stCombo">0</div><div class="stat-name">연속</div></div>
-    <div class="stat-div"></div>
-    <div class="stat-item"><div class="stat-val" id="stHit">0</div><div class="stat-name">성공</div></div>
-    <div class="stat-div"></div>
-    <div class="stat-item"><div class="stat-val" id="stSess">0</div><div class="stat-name">훈련</div></div>
-  </div>
-</div>
-
-<!-- 출석 도장 -->
-<div class="card">
-  <div class="attend-title">📅 출석 도장 <span class="attend-month" id="attendMonth"></span></div>
-  <div class="attend-grid" id="attendGrid"></div>
-  <div class="attend-streak">
-    <span class="ast-icon">🔥</span>
-    <div>
-      <div class="ast-text"><span id="streakDays">0</span>일 연속 훈련 중!</div>
-      <div class="ast-sub" id="streakMsg">오늘 훈련을 시작해보세요</div>
-    </div>
-  </div>
-</div>
-
-<!-- 리포트 -->
-<div class="card report" id="reportCard">
-  <div class="report-title">📋 훈련 결과</div>
-  <div class="report-grid">
-    <div class="ri"><div class="ri-lbl">박자 일치율</div><div class="ri-val" id="rBeat">—</div></div>
-    <div class="ri"><div class="ri-lbl">음성 성공률</div><div class="ri-val" id="rAcc">—</div></div>
-    <div class="ri"><div class="ri-lbl">훈련 BPM</div><div class="ri-val" id="rBpm">—</div></div>
-    <div class="ri"><div class="ri-lbl">단계</div><div class="ri-val" id="rStage">—</div></div>
-  </div>
-  <div class="report-cmt" id="rCmt"></div>
-</div>
-
-<!-- 맞춤 문장 -->
-<div class="card">
-  <div class="cust-hdr">
-    <span class="cust-lbl">맞춤 문장</span>
-    <button class="ctoggle" id="ctoggle">+ 열기</button>
-  </div>
-  <div class="cbody" id="cbody">
-    <div class="hint">단어 사이에 <strong>스페이스</strong>를 넣어 입력하세요.<br>예: <strong>오늘 병원에 갑니다</strong></div>
-    <textarea id="cinput" placeholder="문장을 입력하세요..."></textarea>
-    <div class="prev-box" id="cprev"><span class="pe">입력하면 미리보기가 표시됩니다</span></div>
-    <div class="cb-row">
-      <button class="btn-clr" id="cclr">지우기</button>
-      <button class="btn-apply" id="capply">✓ 이 문장으로 훈련</button>
-    </div>
-  </div>
-</div>
-
-<!-- 녹음 -->
-<div class="rec-area" id="recArea">
-  <div class="rec-title">🎧 녹음 목록</div>
-  <div class="rec-list" id="recList"></div>
-</div>
-
-</div>
 <div class="fb-overlay"><div class="fb-pop" id="fbPop"></div></div>
 
 <script>
 (function(){
 'use strict';
-
-/* ── 데이터 ── */
 var ST = {
   1:{name:'호흡 훈련',bpm:60,isBreath:true,tasks:[
     {l:'2박 들이마시기 / 4박 내쉬기',inhale:2,exhale:4,i:'2박에 코로 들이마시고, 4박에 입으로 내쉬세요.'},
