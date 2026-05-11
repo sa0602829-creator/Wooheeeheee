@@ -342,6 +342,12 @@ textarea::placeholder{color:#C0B09A}
       <span class="vl-val" id="vlVal">—</span>
     </div>
     <div class="vol-hint">▲ 금색 선 이상이어야 통과</div>
+    <div class="vol-live-row" style="margin-top:.45rem">
+      <span class="vl-lbl">기준 조절</span>
+      <input type="range" id="threshSl" min="5" max="120" value="35" style="flex:1">
+      <span class="vl-val" id="threshVal" style="min-width:58px;text-align:right;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold)">보통</span>
+    </div>
+    <div class="vol-hint" style="color:var(--gold)">낮게 = 작은 소리도 통과 &nbsp;·&nbsp; 높게 = 큰 소리만 통과</div>
   </div>
 </div>
 
@@ -562,6 +568,16 @@ function init(){
   document.getElementById('bpmSl').oninput=function(e){setBpm(+e.target.value);reMetro();};
   document.getElementById('tapBtn').onclick=tap;
   document.getElementById('volSl').oninput=function(e){vol=e.target.value/100;};
+  document.getElementById('threshSl').oninput=function(e){
+    VOL_THRESHOLD=+e.target.value;
+    var v=VOL_THRESHOLD;
+    var lbl=v<20?'매우 낮음':v<40?'낮음':v<65?'보통':v<90?'높음':'매우 높음';
+    document.getElementById('threshVal').textContent=lbl;
+    // 금색 선 위치 업데이트
+    var pct=(VOL_THRESHOLD/255)*100;
+    var el=document.getElementById('vlThresh');
+    if(el)el.style.left=pct+'%';
+  };
   document.getElementById('metroBtn').onclick=function(){metroOn?stopMetro():startMetro();};
   document.getElementById('micBtn').onclick=function(){micOn?stopMic():startMic();};
   document.getElementById('recBtn').onclick=function(){recOn?stopRec():startRec();};
