@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>또박톡</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#F4F0E8;--card:#FDFAF5;--border:#E0D8CC;
+  --wood:#3E2208;--wood2:#6B3A18;--gold:#C4882A;--gold2:#E0AA46;
+  --text:#1E160C;--muted:#8A7060;--green:#2A7048;--red:#8A2828;--blue:#2A508A;
+  --sh:rgba(62,34,8,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif KR',serif;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+.topbar{background:var(--wood);padding:.65rem 1rem .55rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.app-name{color:var(--gold2);font-size:1.3rem;font-weight:900;letter-spacing:.06em}
+.app-desc{color:rgba(224,170,70,.4);font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em}
+.streak-badge{background:rgba(255,255,255,.1);border:1.5px solid var(--gold);border-radius:12px;padding:.3rem .8rem;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--gold2);display:flex;align-items:center;gap:.28rem}
+.stage-row{display:flex;gap:.35rem;padding:.55rem .9rem .45rem;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch;flex-shrink:0}
+.stage-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:.36rem .82rem;border-radius:16px;font-family:'DM Mono',monospace;font-size:.68rem;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);white-space:nowrap;font-weight:600;transition:all .14s}
+.chip.on{background:var(--wood);border-color:var(--gold);color:var(--gold2)}
+.scroll-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;padding:.65rem .85rem .4rem;gap:.65rem}
+.scroll-body::-webkit-scrollbar{width:3px}
+.scroll-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.bottom-bar{flex-shrink:0;background:var(--card);border-top:1px solid var(--border);padding:.6rem .85rem .75rem;display:flex;flex-direction:column;gap:.42rem;box-shadow:0 -3px 12px var(--sh)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.9rem 1rem;box-shadow:0 2px 10px var(--sh)}
+.metro-strip{display:flex;align-items:center;gap:.6rem;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.7rem .9rem;box-shadow:0 2px 10px var(--sh)}
+.metro-svg-box{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.metro-bpm{display:flex;flex-direction:column;align-items:center;gap:.08rem;flex-shrink:0}
+.bpm-num{font-family:'DM Mono',monospace;font-size:2.6rem;font-weight:500;color:var(--text);line-height:1}
+.bpm-unit{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
+.pm-row{display:flex;gap:.28rem;margin-top:.32rem}
+.pmb{width:36px;height:36px;background:var(--wood);border:none;border-radius:50%;color:var(--gold2);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(62,34,8,.3);transition:all .1s}
+.pmb:active{transform:scale(.88)}
+.metro-right{flex:1;display:flex;flex-direction:column;gap:.4rem}
+.cue-row{display:flex;gap:.32rem}
+.cue-btn{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:.4rem .2rem;display:flex;flex-direction:column;align-items:center;gap:.1rem;cursor:pointer;transition:all .12s}
+.cue-btn.on{background:var(--wood);border-color:var(--gold)}
+.cue-btn.on .ci{color:var(--gold2)}.cue-btn.on .cl{color:var(--gold2)}
+.ci{font-size:1.35rem;color:var(--muted)}.cl{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);text-align:center}
+.bpm-slider-row{display:flex;align-items:center;gap:.38rem}
+.bpm-slider-row span{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--muted);min-width:18px;text-align:center}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:var(--border);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--wood);border-radius:50%;border:2px solid var(--gold);cursor:pointer}
+.ctrl-row{display:flex;gap:.32rem;align-items:center}
+.tapb{flex:1;padding:.38rem .15rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);cursor:pointer;text-align:center;line-height:1.4}
+.vol-sl-wrap{flex:2}
+.dots{display:flex;gap:4px;justify-content:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .05s}
+.dot.lit{background:var(--gold);transform:scale(1.4);box-shadow:0 0 5px var(--gold2)}
+.dot.lit.acc{background:var(--wood2);box-shadow:0 0 8px var(--gold)}
+.mic-row{display:flex;gap:.5rem}
+.abtn{flex:1;padding:.82rem;border-radius:13px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-family:'Noto Serif KR',serif;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.25rem;transition:all .12s;box-shadow:0 2px 5px var(--sh)}
+.abtn:active{transform:scale(.97)}
+.abtn.go{background:var(--wood);border-color:var(--gold);color:var(--gold2)}
+.abtn.mic-on{background:var(--green);border-color:var(--green);color:#fff}
+.abtn.rec-on{background:var(--red);border-color:var(--red);color:#fff}
+.vol-live{display:none;flex-direction:column;gap:.32rem}
+.vol-live-row{display:flex;align-items:center;gap:.45rem}
+.vl-lbl{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);min-width:54px}
+.vl-track{flex:1;height:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;overflow:hidden;position:relative}
+.vl-fill{height:100%;width:0%;border-radius:6px;transition:width .06s}
+.vl-thresh{position:absolute;top:0;bottom:0;width:2.5px;background:var(--gold);opacity:.95}
+.vl-val{font-family:'DM Mono',monospace;font-size:.75rem;min-width:78px;text-align:right;font-weight:600}
+.vol-hint{font-family:'DM Mono',monospace;font-size:.66rem;color:var(--muted);text-align:center}
+.mic-warning{display:none;background:#FFF4E0;border:2px solid var(--gold);border-radius:13px;padding:.8rem 1rem;text-align:center;font-size:.9rem;color:var(--wood2);font-weight:600;line-height:1.6}
+.mic-warning.show{display:block}
+/* BPM GUIDE */
+.bpm-guide{display:none;background:var(--wood);border-radius:13px;padding:.7rem 1rem;flex-direction:column;gap:.4rem}
+.bpm-guide.show{display:flex}
+.bg-title{font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;text-align:center}
+.bg-items{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:center}
+.bg-item{font-family:'Noto Serif KR',serif;font-size:.88rem;color:rgba(255,255,255,.9);display:flex;align-items:center;gap:.28rem;padding:.35rem .7rem;border-radius:10px;font-weight:600}
+.bg-item strong{color:var(--gold2);font-size:1rem}
+.bg-in{background:rgba(42,112,72,.45)}
+.bg-ex{background:rgba(196,136,42,.35)}
+.bg-syl{background:rgba(42,80,138,.45)}
+.bg-hold{background:rgba(138,40,138,.4)}
+.bg-beat{background:rgba(255,255,255,.1)}
+/* BREATH */
+.breath-card{display:flex;flex-direction:column;align-items:center;gap:.65rem;padding:.9rem 1rem}
+.breath-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:160px;height:160px}
+.breath-circle{width:120px;height:120px;border-radius:50%;border:3px solid var(--gold);background:radial-gradient(circle,rgba(196,136,42,.1) 0%,rgba(196,136,42,.02) 70%);display:flex;align-items:center;justify-content:center}
+@keyframes inhaleAnim{0%{transform:scale(1);border-color:var(--gold)}100%{transform:scale(1.38);border-color:var(--green);box-shadow:0 0 28px rgba(42,112,72,.32)}}
+@keyframes exhaleAnim{0%{transform:scale(1.38);border-color:var(--green)}100%{transform:scale(1);border-color:var(--gold);box-shadow:none}}
+.breath-icon{font-size:3rem}
+.breath-arrow{position:absolute;font-size:2rem;opacity:0;transition:opacity .2s}
+.breath-arrow.show{opacity:1}
+.breath-arrow.up{top:-22px}.breath-arrow.down{bottom:-22px}
+.breath-label{font-size:1.4rem;font-weight:700;color:var(--text);text-align:center}
+.breath-sub{font-size:.85rem;color:var(--muted);text-align:center;line-height:1.5}
+.breath-groups{display:flex;gap:.9rem;justify-content:center;align-items:flex-end}
+.breath-group{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.breath-group-lbl{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);font-weight:600}
+.breath-beats-row{display:flex;gap:.38rem}
+.bb{width:20px;height:20px;border-radius:50%;background:var(--border);border:2px solid var(--border);transition:all .12s}
+.bb.inhale-active{background:var(--green);border-color:var(--green);transform:scale(1.3);box-shadow:0 0 8px rgba(42,112,72,.5)}
+.bb.inhale-done{background:rgba(42,112,72,.3);border-color:var(--green)}
+.bb.exhale-active{background:var(--gold);border-color:var(--gold);transform:scale(1.3);box-shadow:0 0 8px rgba(196,136,42,.5)}
+.bb.exhale-done{background:rgba(196,136,42,.3);border-color:var(--gold)}
+/* SUSTAIN (2단계) */
+.sustain-card{display:flex;flex-direction:column;align-items:center;gap:.7rem;padding:.9rem 1rem}
+.sustain-wrap{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center}
+.s-ring{position:absolute;border-radius:50%;border:4px solid var(--border);transition:border-color .3s,box-shadow .3s}
+.s-ring.r1{width:160px;height:160px}
+.s-ring.r2{width:116px;height:116px}
+.s-ring.r3{width:72px;height:72px}
+.s-center{width:54px;height:54px;border-radius:50%;background:var(--card);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.5rem;z-index:2;transition:all .2s}
+.sustain-bar-wrap{width:100%}
+.sustain-bar-lbl{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:.3rem}
+.sustain-bar{height:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:7px;overflow:hidden}
+.sustain-fill{height:100%;width:0%;border-radius:7px;transition:width .1s linear,background .3s}
+.sustain-label{font-size:1.25rem;font-weight:700;color:var(--text);text-align:center}
+.sustain-sub{font-size:.82rem;color:var(--muted);text-align:center;line-height:1.5}
+/* RHYTHM (3~6단계) */
+.rhythm-card{display:flex;flex-direction:column;gap:.65rem}
+.rhythm-top{display:flex;align-items:center;justify-content:space-between}
+.rhythm-lbl{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.rnav{display:flex;gap:.3rem}
+.rnav-btn{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:.18rem .46rem;font-family:'DM Mono',monospace;font-size:.68rem;cursor:pointer;color:var(--muted)}
+.task-sel{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:.5rem .65rem;font-family:'Noto Serif KR',serif;font-size:.95rem;color:var(--text);outline:none;cursor:pointer;font-weight:600}
+.instr{font-size:.88rem;color:var(--muted);line-height:1.65;background:var(--bg);border-radius:10px;padding:.52rem .75rem;border-left:4px solid var(--gold)}
+.instr strong{color:var(--wood2)}
+/* 리듬 트랙 */
+.rtrack-wrap{position:relative;width:100%;height:110px;background:var(--bg);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.judge-line{position:absolute;bottom:30px;left:8%;right:8%;height:2px;background:rgba(196,136,42,.35)}
+.judge-zone{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;border:3.5px solid var(--gold);background:rgba(196,136,42,.08);display:flex;align-items:center;justify-content:center;z-index:5}
+.judge-inner{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--gold2);background:rgba(196,136,42,.15)}
+.rball{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;z-index:4;pointer-events:none;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.hit-flash{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;opacity:0;pointer-events:none;z-index:6}
+.hit-flash.show{animation:hf .4s ease-out forwards}
+@keyframes hf{0%{opacity:.9;transform:translateX(-50%) scale(.8)}100%{opacity:0;transform:translateX(-50%) scale(2.6)}}
+/* 카라오케 */
+.karaoke{display:flex;flex-wrap:wrap;gap:.22rem .42rem;align-items:baseline;min-height:85px;padding:.08rem 0 .45rem}
+.syl{display:inline-block;font-size:clamp(1.8rem,6vw,2.5rem);font-weight:700;padding:.08rem .22rem;border-radius:7px;color:#C0AC94;transition:color .12s,background .12s,transform .12s;line-height:1.4;position:relative}
+.syl.done{color:var(--green)}.syl.cur{color:var(--text);background:rgba(196,136,42,.14);transform:scale(1.1)}
+.syl.cur::after{content:'';position:absolute;bottom:-4px;left:8%;width:84%;height:3px;background:var(--gold);border-radius:2px;animation:blink .5s ease-in-out infinite alternate}
+@keyframes blink{from{opacity:1}to{opacity:.1}}
+.syl.miss{color:var(--red);text-decoration:line-through;opacity:.5}
+.prog{height:5px;background:var(--bg);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+/* BOTTOM */
+.fb-meters{display:flex;flex-direction:column;gap:.38rem}
+.fb-row{display:flex;align-items:center;gap:.5rem}
+.fb-lbl{font-family:'DM Mono',monospace;font-size:.76rem;color:var(--muted);min-width:60px;font-weight:600}
+.fb-track{flex:1;height:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;overflow:hidden}
+.fb-fill{height:100%;width:0%;border-radius:6px;transition:width .25s,background .25s}
+.fb-val{font-family:'DM Mono',monospace;font-size:.8rem;min-width:56px;text-align:right;font-weight:700;color:var(--muted)}
+.fb-msg-big{font-size:1.05rem;font-weight:700;color:var(--muted);background:var(--bg);border:1.5px solid var(--border);border-radius:13px;padding:.6rem .9rem;text-align:center;transition:all .22s;line-height:1.45;min-height:3rem;display:flex;align-items:center;justify-content:center}
+.fb-msg-big.perfect{color:#fff;background:var(--gold);border-color:var(--gold);box-shadow:0 3px 14px rgba(196,136,42,.4)}
+.fb-msg-big.good{color:#fff;background:var(--green);border-color:var(--green)}
+.fb-msg-big.warn{color:var(--wood);background:#FFF4E0;border-color:var(--gold2)}
+.fb-msg-big.bad{color:#fff;background:var(--red);border-color:var(--red)}
+.sess-row{display:flex;gap:.5rem}
+.sess-btn{flex:2;padding:.88rem;border-radius:14px;border:none;background:var(--wood);color:var(--gold2);font-family:'Noto Serif KR',serif;font-size:1.1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.3rem;box-shadow:0 3px 12px rgba(62,34,8,.26);transition:all .12s;position:relative;overflow:hidden}
+.sess-btn::before{content:'';position:absolute;inset:-3px;border-radius:16px;border:2px solid rgba(224,170,70,.22);animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.18}50%{opacity:.65}}
+.sess-btn.run{background:#6A1A1A;color:#FFB0B0}
+.sess-btn:disabled{background:#C8BCA8;color:#9A8E80;box-shadow:none;cursor:not-allowed}
+.sess-btn:disabled::before{display:none}
+.sess-btn:active{transform:scale(.97)}
+.reset-btn{flex:1;padding:.88rem;border-radius:14px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;cursor:pointer}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr 1px 1fr;gap:.45rem;align-items:center}
+.stat-div{background:var(--border);height:34px}
+.stat-item{text-align:center}
+.stat-val{font-family:'DM Mono',monospace;font-size:1.55rem;color:var(--wood);line-height:1}
+.stat-name{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:.16rem}
+/* ATTEND */
+.attend-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.attend-month{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-left:auto}
+.attend-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem}
+.attend-day-lbl{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);text-align:center;padding-bottom:.18rem}
+.attend-day{width:100%;aspect-ratio:1;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);position:relative;transition:all .2s}
+.attend-day.today{border-color:var(--gold);color:var(--gold);font-weight:700}
+.attend-day.stamped{background:var(--wood);border-color:var(--wood)}
+.attend-day.stamped span{display:none}
+.attend-day.stamped::after{content:'✓';font-size:.72rem;font-weight:900;color:var(--gold2)}
+.attend-streak{margin-top:.55rem;background:var(--bg);border-radius:10px;padding:.52rem .68rem;display:flex;align-items:center;gap:.45rem}
+.ast-icon{font-size:1.35rem}.ast-text{font-size:.92rem;color:var(--text);font-weight:600}
+.ast-sub{font-size:.75rem;color:var(--muted);margin-top:.07rem}
+/* REPORT */
+.report{display:none}.report.show{display:block}
+.report-title{font-size:1rem;font-weight:700;color:var(--wood);margin-bottom:.55rem}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:.42rem;margin-bottom:.52rem}
+.ri{background:var(--bg);border-radius:10px;padding:.5rem .65rem}
+.ri-lbl{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--muted);letter-spacing:.07em}
+.ri-val{font-family:'DM Mono',monospace;font-size:1.25rem;color:var(--text);margin-top:.1rem}
+.report-cmt{font-size:.88rem;color:var(--text);line-height:1.65;background:#F0FBF5;border-radius:10px;padding:.55rem .75rem;border-left:3px solid var(--green)}
+/* CUSTOM */
+.cust-hdr{display:flex;align-items:center;justify-content:space-between}
+.cust-lbl{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.ctoggle{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--wood2);background:none;border:1px solid var(--wood2);border-radius:6px;padding:.17rem .46rem;cursor:pointer}
+.cbody{display:none;flex-direction:column;gap:.52rem;margin-top:.65rem}.cbody.open{display:flex}
+.hint{font-size:.85rem;color:var(--muted);line-height:1.6;background:var(--bg);border-radius:9px;padding:.5rem .7rem;border-left:3px solid var(--gold)}
+.hint strong{color:var(--wood2)}
+textarea{width:100%;min-height:68px;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:.68rem;font-family:'Noto Serif KR',serif;font-size:.98rem;color:var(--text);resize:vertical;outline:none;line-height:1.6}
+textarea:focus{border-color:var(--gold)}
+textarea::placeholder{color:#C0B09A}
+.prev-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.58rem;min-height:34px;display:flex;flex-wrap:wrap;gap:.1rem .18rem;align-items:center}
+.ps{font-size:.95rem;font-weight:600;padding:.02rem .1rem}
+.ps.wb{margin-left:.28rem;border-left:2px solid var(--gold);padding-left:.24rem}
+.ps:first-child{margin-left:0;border-left:none}
+.pe{color:var(--border);font-family:'DM Mono',monospace;font-size:.68rem}
+.cb-row{display:flex;gap:.4rem}
+.btn-apply{flex:1;padding:.55rem;background:var(--wood);color:var(--gold2);border:none;border-radius:10px;font-family:'Noto Serif KR',serif;font-size:.92rem;font-weight:700;cursor:pointer}
+.btn-clr{padding:.55rem .85rem;background:var(--bg);color:var(--muted);border:1px solid var(--border);border-radius:10px;font-size:.92rem;cursor:pointer}
+.rec-area{display:none}
+.rec-title{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.09em;margin-bottom:.38rem}
+.rec-list{display:flex;flex-direction:column;gap:.3rem;max-height:110px;overflow-y:auto}
+.rec-item{display:flex;align-items:center;gap:.38rem;padding:.38rem .52rem;background:var(--bg);border:1px solid var(--border);border-radius:9px}
+.rl{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text);min-width:85px}
+.rec-item audio{flex:1;height:24px;min-width:0}
+.rd{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--wood2);text-decoration:none;padding:.1rem .32rem;border:1px solid var(--wood2);border-radius:5px}
+.rdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.7rem;padding:.08rem .24rem;border-radius:4px}
+.rdel:hover{background:var(--red);color:#fff}
+.fb-overlay{position:fixed;inset:0;pointer-events:none;z-index:999;display:flex;align-items:center;justify-content:center}
+.fb-pop{font-family:'Noto Serif KR',serif;font-weight:900;font-size:4.5rem;opacity:0;transform:scale(.4);pointer-events:none;white-space:nowrap;text-shadow:0 6px 24px rgba(0,0,0,.18)}
+.fb-pop.show{animation:fbIn .68s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes fbIn{0%{opacity:0;transform:scale(.4) translateY(20px)}40%{opacity:1;transform:scale(1.12) translateY(-3px)}75%{transform:scale(.99)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04) translateY(-10px)}}
+@media(max-width:380px){.stats-grid{grid-template-columns:1fr 1fr}.stat-div{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div><div class="app-name">또박톡</div><div class="app-desc">PARKINSON SPEECH THERAPY · RAS</div></div>
+  <div class="streak-badge">🔥 <span id="streakN">0</span>일</div>
+</div>
+<div class="stage-row" id="stageRow">
+  <div class="chip on" data-s="1">1단계 · 호흡</div>
+  <div class="chip" data-s="2">2단계 · 발성</div>
+  <div class="chip" data-s="3">3단계 · 음절</div>
+  <div class="chip" data-s="4">4단계 · 단어</div>
+  <div class="chip" data-s="5">5단계 · 문장</div>
+  <div class="chip" data-s="6">6단계 · 대화</div>
+</div>
+<div class="scroll-body">
+  <!-- 메트로놈 -->
+  <div class="metro-strip">
+    <div class="metro-svg-box">
+      <svg width="66" height="96" viewBox="0 0 155 224" style="overflow:visible;filter:drop-shadow(0 4px 10px rgba(30,10,0,.4))">
+        <defs>
+          <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1C0A02"/><stop offset="14%" stop-color="#582E14"/><stop offset="34%" stop-color="#8A4E26"/><stop offset="50%" stop-color="#9A5E32"/><stop offset="66%" stop-color="#784020"/><stop offset="86%" stop-color="#46260E"/><stop offset="100%" stop-color="#1C0A02"/></linearGradient>
+          <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0C0806"/><stop offset="100%" stop-color="#160E08"/></linearGradient>
+          <linearGradient id="gg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#F2D468"/><stop offset="45%" stop-color="#C4882A"/><stop offset="100%" stop-color="#885A12"/></linearGradient>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#886420"/><stop offset="42%" stop-color="#EEC85C"/><stop offset="100%" stop-color="#886420"/></linearGradient>
+          <linearGradient id="bg2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#582E14"/><stop offset="100%" stop-color="#160802"/></linearGradient>
+        </defs>
+        <polygon points="13,213 142,213 120,64 35,64" fill="url(#wg)"/>
+        <polygon points="28,205 127,205 109,74 46,74" fill="url(#fg)"/>
+        <g font-family="DM Mono,monospace" font-size="7" fill="#C4882A">
+          <text x="35" y="95">40</text><text x="35" y="109">60</text><text x="35" y="123">72</text><text x="35" y="137">80</text><text x="35" y="151">96</text><text x="35" y="165">112</text><text x="35" y="179">132</text><text x="35" y="193">160</text>
+        </g>
+        <g font-family="DM Mono,monospace" font-size="7" fill="#C4882A" text-anchor="end">
+          <text x="120" y="95">40</text><text x="120" y="109">60</text><text x="120" y="123">72</text><text x="120" y="137">80</text><text x="120" y="151">96</text><text x="120" y="165">112</text><text x="120" y="179">132</text><text x="120" y="193">160</text>
+        </g>
+        <g stroke="#C4882A" stroke-width=".75" opacity=".5">
+          <line x1="48" y1="93" x2="107" y2="93"/><line x1="48" y1="107" x2="107" y2="107"/><line x1="48" y1="121" x2="107" y2="121"/><line x1="48" y1="135" x2="107" y2="135"/><line x1="48" y1="149" x2="107" y2="149"/><line x1="48" y1="163" x2="107" y2="163"/><line x1="48" y1="177" x2="107" y2="177"/><line x1="48" y1="191" x2="107" y2="191"/>
+        </g>
+        <text x="77" y="202" font-family="DM Mono,monospace" font-size="7.5" fill="#C4882A" text-anchor="middle" letter-spacing="2.5">BPM</text>
+        <rect x="74.5" y="66" width="5" height="140" rx="2.5" fill="rgba(0,0,0,.36)"/>
+        <g id="pendG" style="transform-origin:77px 70px;transform:rotate(0deg)">
+          <rect x="75.2" y="18" width="3.6" height="124" rx="1.8" fill="url(#rg)"/>
+          <rect x="65" y="122" width="24" height="14" rx="3.5" fill="url(#gg)"/>
+          <rect x="67" y="125" width="20" height="3.5" rx="1.5" fill="rgba(255,255,255,.18)"/>
+          <circle cx="77" cy="70" r="5.5" fill="url(#gg)"/><circle cx="77" cy="70" r="2.2" fill="#F2D468"/>
+          <circle cx="77" cy="16" r="6.5" fill="url(#gg)"/><circle cx="74.8" cy="13.8" r="2" fill="rgba(255,255,255,.4)"/>
+        </g>
+        <circle cx="144" cy="148" r="9" fill="url(#gg)"/>
+        <polygon points="7,213 148,213 148,224 7,224" fill="url(#bg2)"/>
+        <polygon points="7,224 148,224 143,230 12,230" fill="#0C0602"/>
+        <circle cx="77" cy="219" r="7" fill="none" stroke="#C4882A" stroke-width=".8" opacity=".5"/>
+        <circle id="flashC" cx="77" cy="148" r="0" fill="#C4882A" opacity="0"/>
+      </svg>
+      <div class="dots" id="dotsEl"></div>
+    </div>
+    <div class="metro-bpm">
+      <div style="font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);letter-spacing:.1em">템포</div>
+      <div class="bpm-num" id="bpmNum">60</div>
+      <div class="bpm-unit">BPM</div>
+      <div class="pm-row"><button class="pmb" id="bpmM">−</button><button class="pmb" id="bpmP">+</button></div>
+    </div>
+    <div class="metro-right">
+      <div class="cue-row">
+        <div class="cue-btn on" data-cue="audio"><span class="ci">🔊</span><span class="cl">소리</span></div>
+        <div class="cue-btn" data-cue="visual"><span class="ci">👁</span><span class="cl">시각</span></div>
+        <div class="cue-btn" data-cue="vibration"><span class="ci">📳</span><span class="cl">진동</span></div>
+      </div>
+      <div class="bpm-slider-row"><span>40</span><input type="range" id="bpmSl" min="40" max="160" value="60"><span>160</span></div>
+      <div class="ctrl-row">
+        <button class="tapb" id="tapBtn">👆 탭 템포</button>
+        <span style="font-size:.9rem;color:var(--muted)">🔈</span>
+        <div class="vol-sl-wrap"><input type="range" id="volSl" min="0" max="100" value="70"></div>
+      </div>
+    </div>
+  </div>
+  <!-- 마이크/녹음 -->
+  <div class="mic-row">
+    <button class="abtn" id="metroBtn">▶ 메트로놈</button>
+    <button class="abtn" id="micBtn">🎤 마이크</button>
+    <button class="abtn" id="recBtn" style="display:none">⏺ 녹음</button>
+  </div>
+  <!-- 음성 크기 -->
+  <div class="vol-live" id="volLive">
+    <div class="vol-live-row">
+      <span class="vl-lbl">음성 크기</span>
+      <div class="vl-track"><div class="vl-fill" id="vlFill"></div><div class="vl-thresh" id="vlThresh" style="left:14%"></div></div>
+      <span class="vl-val" id="vlVal">—</span>
+    </div>
+    <div class="vol-hint">▲ 금색 선 이상이어야 통과</div>
+    <div class="vol-live-row" style="margin-top:.2rem">
+      <span class="vl-lbl">기준 조절</span>
+      <input type="range" id="threshSl" min="5" max="120" value="35" style="flex:1">
+      <span style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);min-width:52px;text-align:right" id="threshVal">보통</span>
+    </div>
+  </div>
+  <!-- 마이크 안내 -->
+  <div class="mic-warning show" id="micWarning">
+    🎤 마이크를 연결하면 점수 측정이 됩니다.<br>
+    <span style="font-size:.78rem;font-weight:400;color:var(--wood2)">지금은 메트로놈과 시각 가이드만 작동합니다.</span>
+  </div>
+  <!-- BPM 가이드 -->
+  <div class="bpm-guide" id="bpmGuide">
+    <div class="bg-title" id="bgTitle">박자 안내</div>
+    <div class="bg-items" id="bgItems"></div>
+  </div>
+  <!-- 1단계: 호흡 -->
+  <div class="card breath-card" id="breathCard">
+    <div class="breath-wrap">
+      <div class="breath-circle" id="breathCircle"><span class="breath-icon" id="breathIcon">🫁</span></div>
+      <span class="breath-arrow up" id="arrowUp">⬆️</span>
+      <span class="breath-arrow down" id="arrowDown">⬇️</span>
+    </div>
+    <div class="breath-label" id="breathLabel">준비</div>
+    <div class="breath-sub" id="breathSub">메트로놈을 켜고 시작하세요</div>
+    <div class="breath-groups" id="breathGroups"></div>
+  </div>
+  <!-- 2단계: 발성 유지 -->
+  <div class="card sustain-card" id="sustainCard" style="display:none">
+    <div class="sustain-wrap">
+      <div class="s-ring r1" id="sr1"></div>
+      <div class="s-ring r2" id="sr2"></div>
+      <div class="s-ring r3" id="sr3"></div>
+      <div class="s-center" id="sCenter">🎵</div>
+    </div>
+    <div class="sustain-label" id="sLabel">준비</div>
+    <div class="sustain-sub" id="sSub">소리를 원이 가득 찰 때까지 유지하세요</div>
+    <div class="sustain-bar-wrap">
+      <div class="sustain-bar-lbl">유지 진행도</div>
+      <div class="sustain-bar"><div class="sustain-fill" id="sFill"></div></div>
+    </div>
+  </div>
+  <!-- 3~6단계: 리듬 게임 -->
+  <div class="card rhythm-card" id="rhythmCard" style="display:none">
+    <div class="rhythm-top">
+      <span class="rhythm-lbl" id="rhythmLbl">훈련</span>
+      <div class="rnav"><button class="rnav-btn" id="prevT">◀</button><button class="rnav-btn" id="nextT">▶</button></div>
+    </div>
+    <select class="task-sel" id="taskSel"></select>
+    <div class="instr" id="instrEl"></div>
+    <div class="rtrack-wrap" id="rtrackWrap">
+      <div id="rtrack"></div>
+      <div class="judge-line"></div>
+      <div class="judge-zone"><div class="judge-inner"></div></div>
+      <div class="hit-flash" id="hitFlash"></div>
+    </div>
+    <div class="prog"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="karaoke" id="karaokeEl"></div>
+  </div>
+  <!-- 통계 -->
+  <div class="card">
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-val" id="stAcc">—</div><div class="stat-name">정확도</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><div class="stat-val" id="stCombo">0</div><div class="stat-name">연속</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><div class="stat-val" id="stHit">0</div><div class="stat-name">성공</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><div class="stat-val" id="stSess">0</div><div class="stat-name">훈련</div></div>
+    </div>
+  </div>
+  <!-- 출석 -->
+  <div class="card">
+    <div class="attend-title">📅 출석 도장 <span class="attend-month" id="attendMonth"></span></div>
+    <div class="attend-grid" id="attendGrid"></div>
+    <div class="attend-streak"><span class="ast-icon">🔥</span><div><div class="ast-text"><span id="streakDays">0</span>일 연속!</div><div class="ast-sub" id="streakMsg">오늘 훈련을 시작해보세요</div></div></div>
+  </div>
+  <!-- 리포트 -->
+  <div class="card report" id="reportCard">
+    <div class="report-title">📋 훈련 결과</div>
+    <div class="report-grid">
+      <div class="ri"><div class="ri-lbl">박자 일치율</div><div class="ri-val" id="rBeat">—</div></div>
+      <div class="ri"><div class="ri-lbl">음성 성공률</div><div class="ri-val" id="rAcc">—</div></div>
+      <div class="ri"><div class="ri-lbl">훈련 BPM</div><div class="ri-val" id="rBpm">—</div></div>
+      <div class="ri"><div class="ri-lbl">단계</div><div class="ri-val" id="rStage">—</div></div>
+    </div>
+    <div class="report-cmt" id="rCmt"></div>
+  </div>
+  <!-- 맞춤 문장 -->
+  <div class="card">
+    <div class="cust-hdr"><span class="cust-lbl">맞춤 문장</span><button class="ctoggle" id="ctoggle">+ 열기</button></div>
+    <div class="cbody" id="cbody">
+      <div class="hint">단어 사이에 <strong>스페이스</strong>를 넣어 입력하세요.<br>예: <strong>오늘 병원에 갑니다</strong></div>
+      <textarea id="cinput" placeholder="문장을 입력하세요..."></textarea>
+      <div class="prev-box" id="cprev"><span class="pe">입력하면 미리보기가 표시됩니다</span></div>
+      <div class="cb-row"><button class="btn-clr" id="cclr">지우기</button><button class="btn-apply" id="capply">✓ 이 문장으로 훈련</button></div>
+    </div>
+  </div>
+  <!-- 녹음 -->
+  <div class="rec-area" id="recArea">
+    <div class="rec-title">🎧 녹음 목록 — ↓ 버튼으로 저장하세요</div>
+    <div class="rec-list" id="recList"></div>
+  </div>
+</div>
+<!-- 하단 고정 -->
+<div class="bottom-bar">
+  <div class="fb-meters">
+    <div class="fb-row"><span class="fb-lbl">박자</span><div class="fb-track"><div class="fb-fill" id="beatFill"></div></div><span class="fb-val" id="beatVal">—</span></div>
+    <div class="fb-row"><span class="fb-lbl">음성</span><div class="fb-track"><div class="fb-fill" id="volFill"></div></div><span class="fb-val" id="volFbVal">—</span></div>
+  </div>
+  <div class="fb-msg-big" id="fbMsg">메트로놈을 켜고 훈련을 시작하세요.</div>
+  <div class="sess-row">
+    <button class="sess-btn" id="sessBtn" disabled>◉ 훈련 시작</button>
+    <button class="reset-btn" id="resetBtn">↺ 처음</button>
+  </div>
+</div>
+<div class="fb-overlay"><div class="fb-pop" id="fbPop"></div></div>
+<script>
+(function(){
+'use strict';
+var ST={
+  1:{name:'호흡 훈련',bpm:56,mode:'breath',tasks:[
+    {l:'2박 들이마시기 / 4박 내쉬기',inhale:2,exhale:4,i:'2박에 코로 들이마시고, 4박에 입으로 천천히 내쉬세요.'},
+    {l:'4박 들이마시기 / 8박 내쉬기',inhale:4,exhale:8,i:'4박에 깊게 들이마시고, 8박에 아주 천천히 내쉬세요.'},
+    {l:'균등 호흡 3+3',inhale:3,exhale:3,i:'들숨과 날숨을 같은 박자로 반복하세요.'},
+  ]},
+  2:{name:'지속 발성',bpm:52,mode:'sustain',tasks:[
+    {l:'"아——" 지속 발성',vowel:'아',holdBeats:4,i:'원이 <strong>가득 찰 때까지</strong> "아——"를 끊지 말고 유지하세요. 원 3개가 모두 켜지면 성공!'},
+    {l:'"오——" 지속 발성',vowel:'오',holdBeats:4,i:'입술을 둥글게 모으고 원이 <strong>가득 찰 때까지</strong> "오——"를 유지하세요.'},
+    {l:'"이——" 지속 발성',vowel:'이',holdBeats:4,i:'입꼬리를 당기며 원이 <strong>가득 찰 때까지</strong> "이——"를 유지하세요.'},
+    {l:'모음 교대 (각 2박)',vowel:'아·오·이',holdBeats:2,i:'아——(원 가득), 오——(원 가득), 이——(원 가득) 순서로 원이 켜질 때마다 바꾸세요.'},
+  ]},
+  3:{name:'음절 반복',bpm:72,mode:'syllable',tasks:[
+    {l:'파 타 카',t:'파 타 카 파 타 카 파 타 카 파 타 카',spacing:2,i:'원이 <strong>판정선(아래 원)에 닿는 순간</strong> 발음하세요. 타이밍이 핵심!'},
+    {l:'마 라 나',t:'마 라 나 마 라 나 마 라 나 마 라 나',spacing:2,i:'원이 닿는 순간 <strong>또렷하게</strong> 발음하세요.'},
+    {l:'바 보 부 비',t:'바 보 부 비 바 보 부 비 바 보 부 비',spacing:2,i:'입술을 확실히 붙였다 떼며 원이 닿는 순간 발음하세요.'},
+  ]},
+  4:{name:'단어 훈련',bpm:68,mode:'syllable',tasks:[
+    {l:'2음절 단어',t:'바 나 나 사 과 포 도 배 추',spacing:2,i:'음절 하나씩 — 원이 닿을 때마다 발음하세요. 바——나——나.'},
+    {l:'3음절 단어',t:'병 원 가 다 산 책 하 다 운 동',spacing:2,i:'원이 닿을 때마다 음절 하나씩. 병——원——가——다.'},
+    {l:'일상 단어',t:'안 녕 하 세 요 감 사 합 니 다',spacing:2,i:'천천히, 원이 닿는 순간 각 음절을 발음하세요.'},
+  ]},
+  5:{name:'문장 훈련',bpm:72,mode:'word',tasks:[
+    {l:'자기 표현',t:'저는 천천히 또박또박 말할 수 있습니다',spacing:3,i:'원이 닿을 때마다 <strong>단어 하나씩</strong> 말하세요. 저는——천천히——또박또박.'},
+    {l:'병원 문장',t:'오늘은 병원에 갑니다',spacing:3,i:'단어마다 원이 내려옵니다. 원이 닿는 순간 말하세요.'},
+    {l:'일상 문장',t:'오늘 아침에 밥을 먹었습니다',spacing:3,i:'천천히, 단어마다 원에 맞춰 발음하세요.'},
+    {l:'짧은 표현',t:'물 한 잔 주세요',spacing:3,i:'짧고 또렷하게 단어마다 원에 맞춰 말하세요.'},
+  ]},
+  6:{name:'대화 훈련',bpm:68,mode:'word',tasks:[
+    {l:'오늘 기분',t:'오늘 기분은 어떠세요?',spacing:3,i:'원에 맞춰 읽고, 자신의 기분을 대답해 보세요.'},
+    {l:'아침 식사',t:'오늘 아침에 무엇을 드셨나요?',spacing:3,i:'단어마다 원에 맞춰 천천히 읽어보세요.'},
+    {l:'자기 소개',t:'성함이 어떻게 되세요?',spacing:3,i:'단어마다 원에 맞춰 또박또박 말해보세요.'},
+  ]},
+};
+
+var stage=1,taskIdx=0,bpm=56,beats=4,cue='audio',vol=0.7;
+var metroOn=false,metroTimer=null,beatN=0,lastBeat=0;
+var actx=null;
+var sessOn=false,beatCount=0;
+var totalAttempt=0,hitCount=0,combo=0,maxCombo=0,sessCount=0,beatHits=0,beatTotal=0;
+var micOn=false,micStream=null,analyser=null,micAnim=null;
+var recOn=false,recorder=null,recChunks=[],recN=0;
+var fbT=null,tapTimes=[],attendance=[],VOL_THRESHOLD=35;
+var syls=[],sylIdx=0;
+var breathBeat=0,breathInhale=2,breathExhale=4;
+var sustainBeats=0,sustainTarget=4,sustainVolOk=false,sustainCycle=0;
+var beatWindowOpen=false,beatWindowTimer=null,soundInWindow=false,soundVolOk=false;
+var avgVolCache=0;
+
+function init(){
+  loadAttendance();renderAttendance();
+  document.querySelectorAll('.chip').forEach(function(c){c.onclick=function(){document.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});c.classList.add('on');stage=+c.dataset.s;taskIdx=0;loadStage();};});
+  document.querySelectorAll('.cue-btn').forEach(function(b){b.onclick=function(){document.querySelectorAll('.cue-btn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');cue=b.dataset.cue;};});
+  document.getElementById('bpmM').onclick=function(){setBpm(bpm-1);reMetro();};
+  document.getElementById('bpmP').onclick=function(){setBpm(bpm+1);reMetro();};
+  document.getElementById('bpmSl').oninput=function(e){setBpm(+e.target.value);reMetro();};
+  document.getElementById('tapBtn').onclick=tap;
+  document.getElementById('volSl').oninput=function(e){vol=e.target.value/100;};
+  document.getElementById('threshSl').oninput=function(e){
+    VOL_THRESHOLD=+e.target.value;
+    var lbl=VOL_THRESHOLD<20?'매우낮음':VOL_THRESHOLD<40?'낮음':VOL_THRESHOLD<65?'보통':VOL_THRESHOLD<90?'높음':'매우높음';
+    document.getElementById('threshVal').textContent=lbl;
+    var el=document.getElementById('vlThresh');if(el)el.style.left=(VOL_THRESHOLD/255*100)+'%';
+  };
+  document.getElementById('metroBtn').onclick=function(){metroOn?stopMetro():startMetro();};
+  document.getElementById('micBtn').onclick=function(){micOn?stopMic():startMic();};
+  document.getElementById('recBtn').onclick=function(){recOn?stopRec():startRec();};
+  document.getElementById('sessBtn').onclick=function(){sessOn?endSess():startSess();};
+  document.getElementById('resetBtn').onclick=resetSess;
+  document.getElementById('prevT').onclick=function(){taskIdx=Math.max(0,taskIdx-1);loadTask();};
+  document.getElementById('nextT').onclick=function(){taskIdx=Math.min(ST[stage].tasks.length-1,taskIdx+1);loadTask();};
+  document.getElementById('taskSel').onchange=function(e){taskIdx=+e.target.value;loadTask();};
+  document.getElementById('ctoggle').onclick=function(){var b=document.getElementById('cbody');var o=b.classList.toggle('open');this.textContent=o?'— 닫기':'+ 열기';};
+  document.getElementById('cinput').oninput=renderPrev;
+  document.getElementById('cclr').onclick=function(){document.getElementById('cinput').value='';renderPrev();};
+  document.getElementById('capply').onclick=applyCustom;
+  ['touchstart','mousedown','keydown'].forEach(function(ev){document.addEventListener(ev,wakeAudio,{once:true,passive:true});});
+  buildDots();loadStage();
+}
+
+function wakeAudio(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();}catch(e){}}
+function getCtx(){wakeAudio();return actx;}
+
+function tick(accent){
+  try{var c=getCtx();if(!c)return;var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=accent?1050:700;var v=(accent?.48:.26)*vol;g.gain.setValueAtTime(0,c.currentTime);g.gain.linearRampToValueAtTime(v,c.currentTime+.003);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.055);o.start(c.currentTime);o.stop(c.currentTime+.06);}catch(e){}
+}
+function beep(type){
+  try{var c=getCtx();if(!c)return;var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(type==='perfect'){o.type='sine';o.frequency.value=880;}else if(type==='good'){o.type='sine';o.frequency.value=660;}else if(type==='late'){o.type='sine';o.frequency.value=440;}else{o.type='sawtooth';o.frequency.value=200;}g.gain.setValueAtTime(.2*vol,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.18);o.start(c.currentTime);o.stop(c.currentTime+.2);}catch(e){}
+}
+
+function startMetro(){
+  metroOn=true;beatN=0;
+  var b=document.getElementById('metroBtn');b.textContent='⏹ 정지';b.classList.add('go');
+  document.getElementById('sessBtn').disabled=false;
+  startTimer();updateBpmGuide();
+}
+function stopMetro(){
+  metroOn=false;clearInterval(metroTimer);
+  var b=document.getElementById('metroBtn');b.textContent='▶ 메트로놈';b.classList.remove('go');
+  document.getElementById('sessBtn').disabled=true;
+  document.getElementById('pendG').style.transform='rotate(0deg)';
+  buildDots();if(sessOn)endSess();
+  document.getElementById('bpmGuide').classList.remove('show');
+}
+function startTimer(){metroTimer=setInterval(onBeat,(60/bpm)*1000);}
+function reMetro(){if(metroOn){clearInterval(metroTimer);startTimer();updateBpmGuide();}}
+function buildDots(){var el=document.getElementById('dotsEl');el.innerHTML='';for(var i=0;i<beats;i++){var d=document.createElement('div');d.className='dot';d.id='dd'+i;el.appendChild(d);}}
+
+function onBeat(){
+  var acc=beatN%beats===0;
+  lastBeat=performance.now();
+  if(cue==='audio'||cue==='both')tick(acc);
+  if((cue==='vibration'||cue==='both')&&navigator.vibrate)navigator.vibrate(acc?65:35);
+  var ang=(beatN%2===0)?30:-30;
+  var pg=document.getElementById('pendG');
+  pg.style.transition='transform '+((60/bpm)*.87)+'s ease-in-out';
+  pg.style.transform='rotate('+ang+'deg)';
+  if(cue==='visual'||cue==='both'){var fc=document.getElementById('flashC');fc.setAttribute('r',acc?'26':'17');fc.setAttribute('opacity',acc?'.26':'.15');setTimeout(function(){fc.setAttribute('r','0');fc.setAttribute('opacity','0');},115);}
+  else{var fc2=document.getElementById('flashC');fc2.setAttribute('r','11');fc2.setAttribute('opacity',acc?'.17':'.09');setTimeout(function(){fc2.setAttribute('r','0');fc2.setAttribute('opacity','0');},80);}
+  for(var i=0;i<beats;i++){var d=document.getElementById('dd'+i);if(d)d.className='dot';}
+  var ad=document.getElementById('dd'+(beatN%beats));if(ad)ad.className='dot lit'+(acc?' acc':'');
+  beatN++;
+  if(sessOn)onSessBeat();
+}
+
+function setBpm(v){bpm=Math.max(40,Math.min(160,v));document.getElementById('bpmNum').textContent=bpm;document.getElementById('bpmSl').value=bpm;if(metroOn)updateBpmGuide();}
+function tap(){var now=Date.now();if(tapTimes.length>0&&now-tapTimes[tapTimes.length-1]>3000)tapTimes=[];tapTimes.push(now);if(tapTimes.length>=2){var s=0;for(var i=1;i<tapTimes.length;i++)s+=tapTimes[i]-tapTimes[i-1];setBpm(Math.round(60000/(s/(tapTimes.length-1))));reMetro();}if(tapTimes.length>8)tapTimes=tapTimes.slice(-4);}
+
+function updateBpmGuide(){
+  var g=document.getElementById('bpmGuide');if(!g)return;g.classList.add('show');
+  var s=ST[stage],t=s.tasks[taskIdx]||s.tasks[0];
+  var bs=(60/bpm).toFixed(2),items='';
+  if(s.mode==='breath'){
+    document.getElementById('bgTitle').textContent='호흡 박자 안내';
+    items='<div class="bg-item bg-in">🌬 들이마시기 <strong>'+t.inhale+'박 = '+(t.inhale*60/bpm).toFixed(1)+'초</strong></div>'
+         +'<div class="bg-item bg-ex">💨 내쉬기 <strong>'+t.exhale+'박 = '+(t.exhale*60/bpm).toFixed(1)+'초</strong></div>';
+  }else if(s.mode==='sustain'){
+    document.getElementById('bgTitle').textContent='발성 유지 안내';
+    items='<div class="bg-item bg-hold">🎵 원 3개 채울 때까지 유지 <strong>'+t.holdBeats+'박 = '+(t.holdBeats*60/bpm).toFixed(1)+'초</strong></div>'
+         +'<div class="bg-item bg-beat">🥁 1박 = <strong>'+bs+'초</strong></div>';
+  }else if(s.mode==='syllable'){
+    var sp=t.spacing||2;
+    document.getElementById('bgTitle').textContent='음절 타이밍 안내';
+    items='<div class="bg-item bg-syl">🗣 원이 판정선에 닿는 순간 발음!</div>'
+         +'<div class="bg-item bg-beat">⏱ 음절 간격 <strong>'+sp+'박 = '+(sp*60/bpm).toFixed(2)+'초</strong></div>';
+  }else{
+    var sp2=t.spacing||3;
+    document.getElementById('bgTitle').textContent='단어 타이밍 안내';
+    items='<div class="bg-item bg-syl">🗣 원이 닿는 순간 단어 하나 말하기!</div>'
+         +'<div class="bg-item bg-beat">⏱ 단어 간격 <strong>'+sp2+'박 = '+(sp2*60/bpm).toFixed(1)+'초</strong></div>';
+  }
+  document.getElementById('bgItems').innerHTML=items;
+}
+
+function loadStage(){
+  setBpm(ST[stage].bpm);
+  var m=ST[stage].mode;
+  document.getElementById('breathCard').style.display=m==='breath'?'':'none';
+  document.getElementById('sustainCard').style.display=m==='sustain'?'':'none';
+  document.getElementById('rhythmCard').style.display=(m==='syllable'||m==='word')?'':'none';
+  if(m==='breath'){buildBreathGroups();setBreathIdle();}
+  else if(m==='sustain'){loadSustainTask();}
+  else{buildTaskSel();loadTask();}
+  if(metroOn)updateBpmGuide();
+}
+function buildTaskSel(){var sel=document.getElementById('taskSel');sel.innerHTML='';ST[stage].tasks.forEach(function(t,i){var o=document.createElement('option');o.value=i;o.textContent=t.l;sel.appendChild(o);});sel.value=taskIdx;}
+function loadTask(){
+  var t=ST[stage].tasks[taskIdx];
+  document.getElementById('taskSel').value=taskIdx;
+  document.getElementById('rhythmLbl').textContent=stage+'단계 · '+ST[stage].name;
+  document.getElementById('instrEl').innerHTML=t.i;
+  syls=parse(t.t,ST[stage].mode);sylIdx=0;renderK(true);updateProg();
+  document.getElementById('rtrack').innerHTML='';
+  clearFb();document.getElementById('reportCard').classList.remove('show');
+  if(metroOn)updateBpmGuide();
+}
+function loadSustainTask(){
+  var t=ST[2].tasks[taskIdx];
+  document.getElementById('sCenter').textContent=t.vowel[0]||'🎵';
+  document.getElementById('sLabel').textContent='"'+t.vowel+'" 지속 발성';
+  document.getElementById('sSub').innerHTML=t.i;
+  setSustainIdle();clearFb();if(metroOn)updateBpmGuide();
+}
+
+function parse(text,mode){
+  var result=[];
+  if(mode==='word'){
+    var words=text.trim().split(/\s+/).filter(Boolean);
+    words.forEach(function(w,wi){result.push({ch:w,sp:false,isWord:true});if(wi<words.length-1)result.push({ch:' ',sp:true});});
+  }else{
+    var ws=text.trim().split(/\s+/).filter(Boolean);
+    ws.forEach(function(w,wi){Array.from(w).forEach(function(ch){result.push({ch:ch,sp:false,isWord:false});});if(wi<ws.length-1)result.push({ch:' ',sp:true});});
+  }
+  return result;
+}
+function renderK(preview){
+  var el=document.getElementById('karaokeEl');el.innerHTML='';
+  syls.forEach(function(s,i){
+    if(s.sp){var sp=document.createElement('span');sp.style.cssText='width:.25rem;display:inline-block';el.appendChild(sp);return;}
+    var span=document.createElement('span');span.className='syl';span.id='sy'+i;span.textContent=s.ch;
+    if(!preview){if(i<sylIdx)span.classList.add('done');else if(i===sylIdx)span.classList.add('cur');}
+    el.appendChild(span);
+  });
+}
+function updateK(){syls.forEach(function(s,i){if(s.sp)return;var el=document.getElementById('sy'+i);if(!el)return;el.className='syl';if(i<sylIdx)el.classList.add('done');else if(i===sylIdx)el.classList.add('cur');});updateProg();}
+function updateProg(){var tot=syls.filter(function(s){return !s.sp;}).length;var done=syls.filter(function(s,i){return !s.sp&&i<sylIdx;}).length;document.getElementById('progFill').style.width=(tot?done/tot*100:0)+'%';}
+
+function startSess(){
+  if(!metroOn)return;
+  sessOn=true;beatCount=0;sylIdx=0;breathBeat=0;sustainBeats=0;sustainCycle=0;
+  totalAttempt=0;hitCount=0;combo=0;beatHits=0;beatTotal=0;beatWindowOpen=false;
+  var m=ST[stage].mode;
+  if(m==='syllable'||m==='word'){renderK(false);updateProg();document.getElementById('rtrack').innerHTML='';}
+  else if(m==='sustain'){setSustainIdle();sustainVolOk=false;}
+  var sb=document.getElementById('sessBtn');sb.textContent='⏹ 훈련 중지';sb.classList.add('run');
+  document.getElementById('reportCard').classList.remove('show');
+  if(!micOn)setMsg('🎤 마이크 없이는 점수 측정이 안됩니다. 시각 가이드만 작동합니다.','warn');
+  else setMsg('박자에 맞춰 발화하세요!','');
+  markToday();
+}
+function endSess(){
+  sessOn=false;beatWindowOpen=false;
+  if(beatWindowTimer){clearTimeout(beatWindowTimer);beatWindowTimer=null;}
+  sessCount++;
+  var sb=document.getElementById('sessBtn');sb.textContent='◉ 훈련 시작';sb.classList.remove('run');
+  updateStats();showReport();
+}
+function resetSess(){
+  sessOn=false;beatWindowOpen=false;sylIdx=0;beatCount=0;breathBeat=0;sustainBeats=0;sustainCycle=0;hitCount=0;combo=0;totalAttempt=0;
+  var m=ST[stage].mode;
+  if(m==='breath')setBreathIdle();
+  else if(m==='sustain')setSustainIdle();
+  else{renderK(false);updateProg();var tr=document.getElementById('rtrack');if(tr)tr.innerHTML='';}
+  clearFb();
+}
+
+function onSessBeat(){
+  beatCount++;
+  var m=ST[stage].mode;
+  if(m==='breath')onBreathBeat();
+  else if(m==='sustain')onSustainBeat();
+  else onRhythmBeat();
+}
+
+/* ── 1단계: 호흡 ── */
+function onBreathBeat(){
+  var t=ST[1].tasks[taskIdx]||ST[1].tasks[0];
+  breathInhale=t.inhale;breathExhale=t.exhale;
+  breathBeat++;
+  var total=breathInhale+breathExhale,phase=(breathBeat-1)%total;
+  var isInhale=phase<breathInhale,pos=isInhale?phase:phase-breathInhale;
+  var iD=document.getElementById('breathInhaleDots'),eD=document.getElementById('breathExhaleDots');
+  if(iD&&eD){
+    Array.from(iD.children).forEach(function(d,i){d.className='bb';if(isInhale&&i<pos)d.classList.add('inhale-done');else if(isInhale&&i===pos)d.classList.add('inhale-active');else if(!isInhale)d.classList.add('inhale-done');});
+    Array.from(eD.children).forEach(function(d,i){d.className='bb';if(!isInhale&&i<pos)d.classList.add('exhale-done');else if(!isInhale&&i===pos)d.classList.add('exhale-active');});
+  }
+  var bc=document.getElementById('breathCircle');
+  if(isInhale){
+    bc.style.animation='none';bc.offsetHeight;bc.style.animation='inhaleAnim '+((60/bpm)*.9)+'s ease-out forwards';
+    document.getElementById('breathIcon').textContent='🌬';
+    document.getElementById('breathLabel').textContent='들이마시기 ('+(pos+1)+'/'+breathInhale+')';
+    document.getElementById('arrowUp').classList.add('show');document.getElementById('arrowDown').classList.remove('show');
+    setMsg('코로 천천히 들이마세요','good');
+  }else{
+    bc.style.animation='none';bc.offsetHeight;bc.style.animation='exhaleAnim '+((60/bpm)*.9)+'s ease-in forwards';
+    document.getElementById('breathIcon').textContent='💨';
+    document.getElementById('breathLabel').textContent='내쉬기 ('+(pos+1)+'/'+breathExhale+')';
+    document.getElementById('arrowUp').classList.remove('show');document.getElementById('arrowDown').classList.add('show');
+    setMsg('입으로 천천히 내쉬세요','warn');
+  }
+}
+function setBreathIdle(){var bc=document.getElementById('breathCircle');bc.style.animation='none';document.getElementById('breathIcon').textContent='🫁';document.getElementById('breathLabel').textContent='준비';document.getElementById('arrowUp').classList.remove('show');document.getElementById('arrowDown').classList.remove('show');}
+function buildBreathGroups(){
+  var t=ST[1].tasks[taskIdx]||ST[1].tasks[0];breathInhale=t.inhale;breathExhale=t.exhale;
+  var grp=document.getElementById('breathGroups');grp.innerHTML='';
+  var ig=document.createElement('div');ig.className='breath-group';
+  var il=document.createElement('div');il.className='breath-group-lbl';il.textContent='들이마시기 '+breathInhale+'박';
+  var ir=document.createElement('div');ir.className='breath-beats-row';ir.id='breathInhaleDots';
+  for(var i=0;i<breathInhale;i++){var d=document.createElement('div');d.className='bb';ir.appendChild(d);}
+  ig.appendChild(il);ig.appendChild(ir);grp.appendChild(ig);
+  var arr=document.createElement('div');arr.style.cssText='font-size:1.3rem;color:var(--muted);align-self:center';arr.textContent='→';grp.appendChild(arr);
+  var eg=document.createElement('div');eg.className='breath-group';
+  var el=document.createElement('div');el.className='breath-group-lbl';el.textContent='내쉬기 '+breathExhale+'박';
+  var er=document.createElement('div');er.className='breath-beats-row';er.id='breathExhaleDots';
+  for(var j=0;j<breathExhale;j++){var d2=document.createElement('div');d2.className='bb';er.appendChild(d2);}
+  eg.appendChild(el);eg.appendChild(er);grp.appendChild(eg);
+}
+
+/* ── 2단계: 발성 유지 ── */
+function onSustainBeat(){
+  var t=ST[2].tasks[taskIdx];sustainTarget=t.holdBeats;
+  sustainBeats++;
+  var phase=(sustainBeats-1)%sustainTarget;
+  var pct=((phase+1)/sustainTarget)*100;
+  // 채우기 바
+  var fill=document.getElementById('sFill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct<40?'#2A508A':pct<80?'#2A7048':'#C4882A';
+  // 링 3개: 33%, 66%, 100%에서 켜짐
+  updateSRings(pct);
+  if(phase===0&&sustainBeats>sustainTarget){
+    // 사이클 완료 — 판정
+    totalAttempt++;sustainCycle++;
+    if(sustainVolOk){
+      hitCount++;combo++;beatHits++;maxCombo=Math.max(maxCombo,combo);
+      setMsg('✨ 완벽해요! 소리를 잘 유지했습니다!','perfect');
+      beep('perfect');popFb('완벽','#C4882A');
+      showFbBars(1,true);
+    }else{
+      combo=0;
+      setMsg('💨 소리가 끊겼어요. 원이 가득 찰 때까지 유지하세요!','bad');
+      beep('miss');popFb('끊김','#8A2828');showFbBars(0,false);
+    }
+    updateStats();sustainVolOk=false;
+  }
+  if(phase===0){
+    document.getElementById('sLabel').textContent='"'+t.vowel[0]+'" 발성 시작!';
+    if(!micOn)setMsg('박자에 맞춰 원이 가득 찰 때까지 발성을 유지하세요.','');
+  }else{
+    if(micOn){
+      if(avgVolCache>=VOL_THRESHOLD){sustainVolOk=true;document.getElementById('sLabel').textContent='잘 유지하고 있어요! ('+(phase+1)+'/'+sustainTarget+'박)';}
+      else{document.getElementById('sLabel').textContent='소리가 작아요! 더 크게! ('+(phase+1)+'/'+sustainTarget+'박)';}
+    }else{document.getElementById('sLabel').textContent='유지 중... ('+(phase+1)+'/'+sustainTarget+'박)';}
+  }
+}
+function updateSRings(pct){
+  var rings=[{id:'sr1',thr:33},{id:'sr2',thr:66},{id:'sr3',thr:99}];
+  rings.forEach(function(r){
+    var el=document.getElementById(r.id);if(!el)return;
+    if(pct>=r.thr){el.style.borderColor='#C4882A';el.style.boxShadow='0 0 12px rgba(196,136,42,.5)';}
+    else{el.style.borderColor='var(--border)';el.style.boxShadow='none';}
+  });
+}
+function setSustainIdle(){document.getElementById('sFill').style.width='0%';['sr1','sr2','sr3'].forEach(function(id){var el=document.getElementById(id);if(el){el.style.borderColor='var(--border)';el.style.boxShadow='none';}});}
+
+/* ── 3~6단계: 리듬 게임 ── */
+function onRhythmBeat(){
+  var t=ST[stage].tasks[taskIdx];var spacing=t.spacing||2;
+  // 볼 발사: spacing박 전에 미리 발사해야 판정선 도달 타이밍 맞음
+  // beatCount가 spacing 배수일 때 다음 음절의 볼 발사
+  if(beatCount%spacing===0){
+    var ni=getNextSylIdx(sylIdx+(beatCount/spacing>1?1:0));
+    // 사실 간단하게: 매 spacing박마다 현재 sylIdx에 해당하는 볼 발사
+    spawnBall();
+  }
+  // 판정 창 열기 (볼이 판정선에 닿는 시점)
+  openBeatWindow(spacing);
+}
+function getNextSylIdx(){var idx=sylIdx;while(idx<syls.length&&syls[idx].sp)idx++;return idx;}
+function spawnBall(){
+  var track=document.getElementById('rtrack');if(!track)return;
+  var ni=sylIdx;while(ni<syls.length&&syls[ni].sp)ni++;
+  if(ni>=syls.length)return;
+  var t=ST[stage].tasks[taskIdx];var spacing=t.spacing||2;
+  var ch=syls[ni].ch;
+  var wH=110,sz=syls[ni].isWord?Math.min(52,Math.max(36,ch.length*16)):46;
+  var colors=['#C4882A','#2A7048','#2A508A','#8A2828','#6B3A8A'];
+  var col=colors[ni%colors.length];
+  var ball=document.createElement('div');ball.className='rball';
+  ball.style.cssText='width:'+sz+'px;height:'+sz+'px;background:'+col+';border:3px solid rgba(255,255,255,.3);font-size:'+(syls[ni].isWord?'.72rem':'1.05rem')+';top:2px;left:calc(50% - '+Math.floor(sz/2)+'px);';
+  ball.textContent=ch;track.appendChild(ball);
+  var duration=(60/bpm)*spacing*1000;
+  var startTime=performance.now();
+  var endY=wH-sz-14; // 판정선 위치(bottom:12px+sz)
+  (function animBall(){
+    var p=Math.min((performance.now()-startTime)/duration,1);
+    ball.style.top=Math.round(p*endY)+'px';
+    if(p<1)requestAnimationFrame(animBall);
+    else{setTimeout(function(){ball.remove();},100);}
+  })();
+}
+
+function openBeatWindow(spacing){
+  if(beatWindowOpen)closeBeatWindow();
+  while(sylIdx<syls.length&&syls[sylIdx].sp)sylIdx++;
+  if(sylIdx>=syls.length){endSess();return;}
+  beatTotal++;
+  beatWindowOpen=true;soundInWindow=false;soundVolOk=false;
+  if(!micOn){
+    // 마이크 없으면 글자만 넘김
+    beatWindowOpen=false;
+    var el=document.getElementById('sy'+sylIdx);if(el){el.classList.remove('cur');el.classList.add('done');}
+    sylIdx++;while(sylIdx<syls.length&&syls[sylIdx].sp)sylIdx++;
+    updateK();return;
+  }
+  if(beatWindowTimer)clearTimeout(beatWindowTimer);
+  beatWindowTimer=setTimeout(function(){closeBeatWindow();},300);
+}
+function closeBeatWindow(){
+  if(!beatWindowOpen)return;beatWindowOpen=false;
+  if(beatWindowTimer){clearTimeout(beatWindowTimer);beatWindowTimer=null;}
+  totalAttempt++;
+  if(soundInWindow&&soundVolOk){var tm=performance.now()-lastBeat;onSylHit(Math.max(0,1-tm/300));}
+  else if(soundInWindow){onSylFail('quiet');}
+  else{onSylFail('miss');}
+}
+function onSylHit(acc){
+  if(sylIdx>=syls.length)return;var s=syls[sylIdx];if(!s||s.sp)return;
+  var lbl,col,msg,bt;
+  if(acc>0.7){lbl='완벽';col='#C4882A';msg='✨ 완벽해요! 박자가 딱 맞습니다!';bt='perfect';}
+  else if(acc>0.3){lbl='좋음';col='#2A7048';msg='👍 잘 하셨어요!';bt='good';}
+  else{lbl='늦음';col='#6B3A18';msg='🕐 조금 늦었어요. 원이 닿는 순간 발음하세요.';bt='late';}
+  hitCount++;combo++;beatHits++;maxCombo=Math.max(maxCombo,combo);
+  beep(bt);showFbBars(acc,true);setMsg(msg,acc>0.7?'perfect':'good');popFb(lbl,col);hitFlash(col);
+  var el=document.getElementById('sy'+sylIdx);if(el){el.classList.remove('cur');el.classList.add('done');}
+  sylIdx++;while(sylIdx<syls.length&&syls[sylIdx].sp)sylIdx++;
+  updateK();updateStats();
+}
+function onSylFail(reason){
+  if(sylIdx>=syls.length)return;
+  var msg,cls;
+  if(reason==='quiet'){msg='🔇 소리가 너무 작아요! 더 크게 말해보세요!';cls='bad';}
+  else{msg='💨 박자를 놓쳤어요. 원이 닿는 순간 발음하세요!';cls='bad';}
+  combo=0;beep('miss');showFbBars(0,false);setMsg(msg,cls);popFb('놓침','#8A2828');hitFlash('#8A2828');
+  var el=document.getElementById('sy'+sylIdx);if(el){el.classList.remove('cur');el.classList.add('miss');}
+  sylIdx++;while(sylIdx<syls.length&&syls[sylIdx].sp)sylIdx++;
+  updateK();updateStats();
+}
+function hitFlash(col){var fl=document.getElementById('hitFlash');if(!fl)return;fl.style.background=col;fl.style.border='3px solid '+col;fl.classList.remove('show');void fl.offsetWidth;fl.classList.add('show');}
+
+function showFbBars(timingAcc,volOk){
+  var tPct=Math.round(timingAcc*100);var col=timingAcc>0.7?'#C4882A':timingAcc>0.3?'#2A7048':'#8A2828';
+  document.getElementById('beatFill').style.cssText='width:'+tPct+'%;background:'+col;document.getElementById('beatVal').textContent=tPct+'%';document.getElementById('beatVal').style.color=col;
+  document.getElementById('volFill').style.cssText='width:'+(volOk?'100%':'20%')+';background:'+(volOk?'#2A7048':'#8A2828');document.getElementById('volFbVal').textContent=volOk?'✅ OK':'🔇 작음';document.getElementById('volFbVal').style.color=volOk?'#2A7048':'#8A2828';
+}
+function clearFb(){document.getElementById('beatFill').style.width='0%';document.getElementById('beatVal').textContent='—';document.getElementById('volFill').style.width='0%';document.getElementById('volFbVal').textContent='—';setMsg(micOn?'훈련 시작 버튼을 눌러주세요.':'메트로놈을 켜고 훈련을 시작하세요.','');}
+function setMsg(m,cls){var el=document.getElementById('fbMsg');el.textContent=m;el.className='fb-msg-big'+(cls?' '+cls:'');}
+function popFb(lbl,col){var mp={완벽:'✨ 완벽!',좋음:'👍 좋아요',늦음:'🕐 늦음',작음:'🔇 작음',놓침:'💨 놓침',끊김:'💨 끊김'};var sz={완벽:'4rem',좋음:'3.5rem',늦음:'3rem',작음:'3rem',놓침:'2.8rem',끊김:'2.8rem'};var p=document.getElementById('fbPop');p.textContent=mp[lbl]||lbl;p.style.color=col;p.style.fontSize=sz[lbl]||'3rem';p.classList.remove('show');void p.offsetWidth;p.classList.add('show');if(fbT)clearTimeout(fbT);fbT=setTimeout(function(){p.classList.remove('show');},720);}
+function updateStats(){var acc=totalAttempt>0?Math.round(hitCount/totalAttempt*100):0;document.getElementById('stAcc').textContent=totalAttempt>0?acc+'%':'—';document.getElementById('stCombo').textContent=combo;document.getElementById('stHit').textContent=hitCount;document.getElementById('stSess').textContent=sessCount;}
+function showReport(){var acc=totalAttempt>0?Math.round(hitCount/totalAttempt*100):0;var beat=beatTotal>0?Math.round(beatHits/beatTotal*100):0;document.getElementById('rBeat').textContent=beat+'%';document.getElementById('rAcc').textContent=acc+'%';document.getElementById('rBpm').textContent=bpm+' BPM';document.getElementById('rStage').textContent=stage+'단계 · '+ST[stage].name;var c=acc>=85?'훌륭합니다! 다음 단계에 도전해 보세요 🎉':acc>=70?'안정적인 발화입니다. 꾸준히 반복하세요.':acc>=50?'박자에 더 집중하거나 BPM을 낮춰보세요.':'천천히 메트로놈에 집중하며 다시 시도하세요.';document.getElementById('rCmt').textContent=c;document.getElementById('reportCard').classList.add('show');}
+
+function startMic(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){setMsg('⚠ 음성인식은 Chrome에서만 작동합니다','bad');return;}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    micStream=stream;micOn=true;
+    var mb=document.getElementById('micBtn');mb.textContent='🔴 마이크 ON';mb.classList.add('mic-on');
+    document.getElementById('recBtn').style.display='';
+    document.getElementById('volLive').style.display='flex';
+    document.getElementById('micWarning').classList.remove('show');
+    startViz(stream);setMsg('🎤 마이크 연결 완료! 훈련을 시작하세요.','good');
+  }).catch(function(e){setMsg('마이크 접근 실패: '+e.message,'bad');});
+}
+function stopMic(){
+  stopRec();micOn=false;
+  var mb=document.getElementById('micBtn');mb.textContent='🎤 마이크';mb.classList.remove('mic-on');
+  document.getElementById('recBtn').style.display='none';document.getElementById('volLive').style.display='none';
+  document.getElementById('micWarning').classList.add('show');
+  if(micStream){micStream.getTracks().forEach(function(t){t.stop();});micStream=null;}
+  if(micAnim){cancelAnimationFrame(micAnim);micAnim=null;}analyser=null;avgVolCache=0;
+}
+function startViz(stream){
+  var c=getCtx();if(!c)return;
+  var src=c.createMediaStreamSource(stream);analyser=c.createAnalyser();analyser.fftSize=256;src.connect(analyser);
+  document.getElementById('vlThresh').style.left=(VOL_THRESHOLD/255*100)+'%';
+  function draw(){
+    micAnim=requestAnimationFrame(draw);if(!analyser)return;
+    var d=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(d);
+    var avg=0;for(var i=0;i<d.length;i++)avg+=d[i];avg/=d.length;avgVolCache=avg;
+    var pct=(avg/255)*100;var fill=document.getElementById('vlFill');
+    fill.style.width=pct+'%';fill.style.background=avg>=VOL_THRESHOLD?'#2A7048':'#8A2828';
+    document.getElementById('vlVal').textContent=avg<VOL_THRESHOLD?'🔇 작음':'✅ '+(avg<80?'적절':avg<140?'좋음':'📢 크게');
+    document.getElementById('vlVal').style.color=avg>=VOL_THRESHOLD?'#2A7048':'#8A2828';
+    if(sessOn&&beatWindowOpen&&avg>VOL_THRESHOLD){soundInWindow=true;soundVolOk=true;}
+    if(sessOn&&ST[stage].mode==='sustain'&&avg>VOL_THRESHOLD){sustainVolOk=true;}
+  }
+  draw();
+}
+
+function startRec(){if(!micStream||recOn)return;recChunks=[];var mime='audio/webm';try{if(typeof MediaRecorder!=='undefined'&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))mime='audio/webm;codecs=opus';}catch(e){}try{recorder=new MediaRecorder(micStream,{mimeType:mime});}catch(e){try{recorder=new MediaRecorder(micStream);}catch(e2){return;}}recorder.ondataavailable=function(e){if(e.data&&e.data.size>0)recChunks.push(e.data);};recorder.onstop=function(){saveRec(recorder.mimeType);};recorder.start(100);recOn=true;var rb=document.getElementById('recBtn');rb.textContent='⏹ 중지';rb.classList.add('rec-on');}
+function stopRec(){if(!recOn||!recorder)return;try{recorder.stop();}catch(e){}recOn=false;var rb=document.getElementById('recBtn');rb.textContent='⏺ 녹음';rb.classList.remove('rec-on');}
+function saveRec(mime){if(!recChunks.length)return;var blob=new Blob(recChunks,{type:mime});var url=URL.createObjectURL(blob);var ext=mime.includes('ogg')?'ogg':'webm';recN++;var now=new Date();var lbl=stage+'단계 '+recN+'회 ('+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+')';document.getElementById('recArea').style.display='';var list=document.getElementById('recList');var item=document.createElement('div');item.className='rec-item';var nm=document.createElement('span');nm.className='rl';nm.textContent=lbl;var au=document.createElement('audio');au.src=url;au.controls=true;var dl=document.createElement('a');dl.href=url;dl.download='또박톡_'+recN+'.'+ext;dl.className='rd';dl.textContent='↓';var del=document.createElement('button');del.className='rdel';del.textContent='✕';del.onclick=function(){URL.revokeObjectURL(url);item.remove();};item.appendChild(nm);item.appendChild(au);item.appendChild(dl);item.appendChild(del);list.insertBefore(item,list.firstChild);}
+
+function renderPrev(){var raw=document.getElementById('cinput').value;var box=document.getElementById('cprev');if(!raw.trim()){box.innerHTML='<span class="pe">입력하면 미리보기가 표시됩니다</span>';return;}box.innerHTML='';raw.trim().split(/\s+/).filter(Boolean).forEach(function(w,wi){Array.from(w).forEach(function(ch,ci){var s=document.createElement('span');s.className='ps'+(ci===0&&wi>0?' wb':'');s.textContent=ch;box.appendChild(s);});});}
+function applyCustom(){var raw=document.getElementById('cinput').value.trim();if(!raw)return;syls=parse(raw,'word');sylIdx=0;document.getElementById('breathCard').style.display='none';document.getElementById('sustainCard').style.display='none';document.getElementById('rhythmCard').style.display='';renderK(true);updateProg();clearFb();document.getElementById('rhythmLbl').textContent='맞춤 문장';document.getElementById('instrEl').innerHTML='단어마다 원이 내려옵니다. <strong>원이 닿는 순간</strong> 단어를 말하세요.';}
+
+function getKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function loadAttendance(){try{var s=localStorage.getItem('ddobak_v3');attendance=s?JSON.parse(s):[];}catch(e){attendance=[];}}
+function saveAttendance(){try{localStorage.setItem('ddobak_v3',JSON.stringify(attendance));}catch(e){}}
+function markToday(){var key=getKey(new Date());if(attendance.indexOf(key)<0){attendance.push(key);saveAttendance();renderAttendance();}}
+function renderAttendance(){
+  var now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  var mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('attendMonth').textContent=y+'년 '+mn[m];
+  var fd=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
+  var grid=document.getElementById('attendGrid');grid.innerHTML='';
+  ['일','월','화','수','목','금','토'].forEach(function(d){var el=document.createElement('div');el.className='attend-day-lbl';el.textContent=d;grid.appendChild(el);});
+  for(var i=0;i<fd;i++){var emp=document.createElement('div');emp.style.visibility='hidden';grid.appendChild(emp);}
+  var todayKey=getKey(now);
+  for(var day=1;day<=dim;day++){var key=y+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');var el=document.createElement('div');el.className='attend-day';var stamped=attendance.indexOf(key)>=0,isToday=key===todayKey;if(stamped)el.classList.add('stamped');else if(isToday)el.classList.add('today');if(!stamped)el.innerHTML='<span>'+day+'</span>';grid.appendChild(el);}
+  var streak=0,check=new Date();while(true){var k=getKey(check);if(attendance.indexOf(k)>=0){streak++;check.setDate(check.getDate()-1);}else break;}
+  document.getElementById('streakN').textContent=streak;document.getElementById('streakDays').textContent=streak;document.getElementById('streakMsg').textContent=streak>0?streak+'일째 훈련 중! 화이팅 💪':'오늘 첫 훈련을 시작해보세요';
+}
+
+init();
+})();
+</script>
+</body>
+</html>
