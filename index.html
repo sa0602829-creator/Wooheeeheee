@@ -478,22 +478,22 @@ var ST = {
      i:'동그라미 하나에 음절 하나. 천천히 켜지는 순간 발음하세요.'},
   ]},
   5:{name:'문장 훈련', bpm:72, mode:'word', tasks:[
-    {l:'자기 표현', items:['저는','천천히','또박또박','말할','수','있습니다'],
-     i:'동그라미 하나에 단어 하나. <strong>동그라미가 켜지는 순간</strong> 그 단어를 말하세요.'},
+    {l:'자기 표현', items:['저는','천천히','또박또박','말할 수 있습니다'],
+     i:'동그라미가 <strong>켜지는 순간</strong> 그 묶음을 말하세요. 동그라미 4개.'},
     {l:'병원 문장', items:['오늘은','병원에','갑니다'],
-     i:'동그라미 하나에 단어 하나. 켜지는 순간 말하세요.'},
-    {l:'일상 문장', items:['오늘','아침에','밥을','먹었습니다'],
-     i:'동그라미 하나에 단어 하나. 천천히 켜지는 순간 말하세요.'},
-    {l:'짧은 표현', items:['물','한','잔','주세요'],
-     i:'동그라미 하나에 단어 하나. 또렷하게 켜지는 순간 말하세요.'},
+     i:'동그라미가 켜지는 순간 말하세요. 동그라미 3개.'},
+    {l:'일상 문장', items:['오늘 아침에','밥을','먹었습니다'],
+     i:'동그라미가 켜지는 순간 말하세요. 동그라미 3개.'},
+    {l:'짧은 표현', items:['물 한 잔','주세요'],
+     i:'동그라미가 켜지는 순간 말하세요. 동그라미 2개.'},
   ]},
   6:{name:'대화 훈련', bpm:68, mode:'word', tasks:[
-    {l:'오늘 기분', items:['오늘','기분은','어떠세요?'],
-     i:'동그라미 하나에 단어 하나. 질문을 읽고 답을 같은 방식으로 말해보세요.'},
-    {l:'아침 식사', items:['오늘','아침에','무엇을','드셨나요?'],
-     i:'동그라미 하나에 단어 하나. 켜지는 순간 말하세요.'},
-    {l:'자기 소개', items:['성함이','어떻게','되세요?'],
-     i:'동그라미 하나에 단어 하나. 또박또박 말하세요.'},
+    {l:'오늘 기분', items:['오늘 기분은','어떠세요?'],
+     i:'동그라미가 켜지는 순간 그 묶음을 말하세요. 동그라미 2개.'},
+    {l:'아침 식사', items:['오늘 아침에','무엇을 드셨나요?'],
+     i:'동그라미가 켜지는 순간 말하세요. 동그라미 2개.'},
+    {l:'자기 소개', items:['성함이','어떻게 되세요?'],
+     i:'동그라미가 켜지는 순간 또박또박 말하세요. 동그라미 2개.'},
   ]},
 };
 
@@ -505,12 +505,12 @@ var sessOn=false, beatCount=0;
 var totalAttempt=0, hitCount=0, combo=0, maxCombo=0, sessCount=0, beatHits=0, beatTotal=0;
 var micOn=false, micStream=null, analyser=null, micAnim=null;
 var recOn=false, recorder=null, recChunks=[], recN=0;
-var fbT=null, tapTimes=[], attendance=[], VOL_THRESHOLD=35, avgVol=0;
+var fbT=null, tapTimes=[], attendance=[], VOL_THRESHOLD=35, avgVol=0, beatOpenTime=0;
 
 // 훈련 상태
 var items=[];        // 현재 과제의 아이템 배열
 var itemIdx=0;       // 현재 위치
-var beatWindowOpen=false, beatWindowTimer=null, soundInWindow=false, soundVolOk=false;
+var beatWindowOpen=false, beatWindowTimer=null, soundInWindow=false, soundVolOk=false, soundHitTime=0;
 
 // 호흡
 var breathPhase=0;   // 0=inhale, 1=exhale
@@ -852,23 +852,36 @@ function onSustainBeat(){
 function onItemBeat(){
   if(itemIdx>=items.length){endSess();return;}
   beatTotal++;
-  // 현재 도트 활성화
+  // 이전 예고 도트 끄기
+  if(itemIdx>0)setDotState('item-'+(itemIdx-1),'done');
+  // 현재 도트 활성화 (켜지는 순간!)
   setDotState('item-'+itemIdx,'active');
   updateCurrentWord(); updateSentFlow();
+  // 다음 도트 예고 (있으면)
+  if(itemIdx+1<items.length){
+    setTimeout(function(){
+      if(!sessOn)return;
+      var nextEl=document.getElementById('dot-item-'+(itemIdx+1));
+      if(nextEl&&nextEl.className.indexOf('active')<0&&nextEl.className.indexOf('done')<0){
+        nextEl.style.borderColor='var(--gold2)';
+        nextEl.style.boxShadow='0 0 8px rgba(224,170,70,.5)';
+      }
+    },(60/bpm)*1000*0.6);
+  }
   if(!micOn){
-    // 마이크 없으면 그냥 넘김
-    setTimeout(function(){setDotState('item-'+itemIdx,'done');},400);
+    setTimeout(function(){setDotState('item-'+itemIdx,'done');},350);
     itemIdx++;updateProg();return;
   }
-  // 판정 창 열기 (박자 전후 500ms)
   openBeatWindow();
 }
 
 function openBeatWindow(){
   if(beatWindowOpen)closeBeatWindow(true);
   beatWindowOpen=true;soundInWindow=false;soundVolOk=false;
+  beatOpenTime=performance.now();
   if(beatWindowTimer)clearTimeout(beatWindowTimer);
-  beatWindowTimer=setTimeout(function(){closeBeatWindow(false);},500);
+  // 판정 창: 300ms (박자 켜지는 순간 전후 300ms)
+  beatWindowTimer=setTimeout(function(){closeBeatWindow(false);},300);
 }
 function closeBeatWindow(skip){
   if(!beatWindowOpen)return;beatWindowOpen=false;
@@ -876,7 +889,10 @@ function closeBeatWindow(skip){
   if(skip)return;
   totalAttempt++;
   if(soundInWindow&&soundVolOk){
-    var tm=performance.now()-lastBeat;onItemHit(Math.max(0,1-tm/500));
+    // 박자 켜진 시점(beatOpenTime)에서 얼마나 가까웠는지로 정확도 측정
+    var tm=Math.abs(soundHitTime-beatOpenTime);
+    var acc=Math.max(0,1-tm/300);
+    onItemHit(acc);
   }else if(soundInWindow&&!soundVolOk){
     onItemFail('quiet');
   }else{
@@ -957,7 +973,7 @@ function startViz(stream){
     document.getElementById('vlVal').textContent=avgVol<VOL_THRESHOLD?'🔇 작음':'✅ '+(avgVol<80?'적절':avgVol<140?'좋음':'📢 크게');
     document.getElementById('vlVal').style.color=avgVol>=VOL_THRESHOLD?'#2A7048':'#8A2828';
     // 판정창 열려있을 때 체크
-    if(sessOn&&beatWindowOpen&&avgVol>VOL_THRESHOLD){soundInWindow=true;soundVolOk=true;}
+    if(sessOn&&beatWindowOpen&&avgVol>VOL_THRESHOLD&&!soundInWindow){soundInWindow=true;soundVolOk=true;soundHitTime=performance.now();}
   }
   draw();
 }
@@ -968,11 +984,45 @@ function stopRec(){if(!recOn||!recorder)return;try{recorder.stop();}catch(e){}re
 function saveRec(mime){if(!recChunks.length)return;var blob=new Blob(recChunks,{type:mime});var url=URL.createObjectURL(blob);var ext=mime.includes('ogg')?'ogg':'webm';recN++;var now=new Date();var lbl=stage+'단계 '+recN+'회 ('+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+')';document.getElementById('recArea').style.display='';var list=document.getElementById('recList');var item=document.createElement('div');item.className='rec-item';var nm=document.createElement('span');nm.className='rl';nm.textContent=lbl;var au=document.createElement('audio');au.src=url;au.controls=true;var dl=document.createElement('a');dl.href=url;dl.download='또박톡_'+recN+'.'+ext;dl.className='rd';dl.textContent='↓';var del=document.createElement('button');del.className='rdel';del.textContent='✕';del.onclick=function(){URL.revokeObjectURL(url);item.remove();};item.appendChild(nm);item.appendChild(au);item.appendChild(dl);item.appendChild(del);list.insertBefore(item,list.firstChild);}
 
 /* ── CUSTOM ── */
-function renderPrev(){var raw=document.getElementById('cinput').value;var box=document.getElementById('cprev');if(!raw.trim()){box.innerHTML='<span class="pe">입력하면 미리보기가 표시됩니다</span>';return;}box.innerHTML='';raw.trim().split(/\s+/).filter(Boolean).forEach(function(w,wi){Array.from(w).forEach(function(ch,ci){var s=document.createElement('span');s.className='ps'+(ci===0&&wi>0?' wb':'');s.textContent=ch;box.appendChild(s);});});}
+function renderPrev(){
+  var raw=document.getElementById('cinput').value;
+  var box=document.getElementById('cprev');
+  if(!raw.trim()){box.innerHTML='<span class="pe">입력하면 미리보기가 표시됩니다</span>';return;}
+  box.innerHTML='';
+  var chunks;
+  if(raw.indexOf('/')>=0){
+    chunks=raw.split('/').map(function(s){return s.trim();}).filter(Boolean);
+  }else{
+    chunks=raw.trim().split(' ').map(function(x){return x.trim();}).filter(function(x){return x.length>0;});
+  }
+  chunks.forEach(function(ch,i){
+    var span=document.createElement('span');
+    span.style.cssText='display:inline-flex;align-items:center;justify-content:center;background:var(--bg);border:2px solid var(--gold);border-radius:10px;padding:.25rem .6rem;font-size:.88rem;font-weight:700;color:var(--text);margin:.2rem';
+    span.textContent=ch;
+    box.appendChild(span);
+    if(i<chunks.length-1){
+      var arr=document.createElement('span');
+      arr.style.cssText='color:var(--muted);font-size:.8rem;margin:.2rem';
+      arr.textContent='→';
+      box.appendChild(arr);
+    }
+  });
+  var cnt=document.createElement('div');
+  cnt.style.cssText='width:100%;text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:.3rem';
+  cnt.textContent='동그라미 '+chunks.length+'개';
+  box.appendChild(cnt);
+}
 function applyCustom(){
   var raw=document.getElementById('cinput').value.trim();if(!raw)return;
-  var words=raw.trim().split(/\s+/).filter(Boolean);
-  items=words;itemIdx=0;
+  var chunks;
+  if(raw.indexOf('/')>=0){
+    // / 로 구분된 청크
+    chunks=raw.split('/').map(function(s){return s.trim();}).filter(Boolean);
+  }else{
+    // 스페이스로 단어 구분
+    chunks=raw.trim().split(' ').map(function(x){return x.trim();}).filter(function(x){return x.length>0;});
+  }
+  items=chunks;itemIdx=0;
   document.getElementById('instrEl').innerHTML='동그라미 하나에 단어 하나. <strong>동그라미가 켜지는 순간</strong> 그 단어를 말하세요.';
   document.getElementById('trainStageLbl').textContent='맞춤 문장';
   renderBeatGrid();renderSentFlow();updateCurrentWord();updateProg();clearFb();
