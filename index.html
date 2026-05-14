@@ -272,7 +272,7 @@ textarea::placeholder{color:#C0B09A}
       <div class="cue-btn" data-cue="visual"><span class="ci">👁</span><span class="cl">시각</span></div>
       <div class="cue-btn" data-cue="vibration"><span class="ci">📳</span><span class="cl">진동</span></div>
     </div>
-    <div class="bpm-slider-row"><span>40</span><input type="range" id="bpmSl" min="40" max="160" value="60"><span>160</span></div>
+    <div class="bpm-slider-row"><span>40</span><input type="range" id="bpmSl" min="60" max="90" step="10" value="60"><span>160</span></div>
     <div class="ctrl-row">
       <button class="tapb" id="tapBtn">👆 탭 템포</button>
       <span style="font-size:.9rem;color:var(--muted)">🔈</span>
@@ -431,21 +431,29 @@ var ST = {
     { l:'마 라 나', items:['마','라','나','마','라','나','마','라','나','마','라','나'], i:'동그라미 하나 = 1초. 켜지는 순간 또렷하게 발음하세요.' },
     { l:'바 보 부 비', items:['바','보','부','비','바','보','부','비','바','보','부','비'], i:'동그라미 하나 = 1초. 입술을 붙였다 떼며 발음하세요.' }
   ]},
-  4: { name:'단어 훈련', bpm:60, mode:'item', beatsPerItem:1, tasks:[
-    { l:'인사말 (음절)', items:['안','녕','하','세','요','감','사','합','니','다'], i:'동그라미 하나 = 1초 = 음절 하나. <strong>켜지는 순간</strong> 그 음절을 또렷하게 말하세요.' },
-    { l:'병원 단어 (음절)', items:['병','원','에','갑','니','다','약','주','세','요'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' },
-    { l:'일상 단어 (음절)', items:['화','장','실','편','의','점','도','와','주','세','요'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' }
+  4: { name:'단어 훈련', bpm:60, mode:'item', beatsPerItem:1, noShuffle:true, tasks:[
+    { l:'인사말', items:['안','녕','하','세','요','감','사','합','니','다','죄','송','합','니','다'], i:'동그라미 하나 = 음절 하나. <strong>켜지는 순간</strong> 또렷하게 말하세요.' },
+    { l:'병원 표현', items:['처','방','전','주','세','요','진','료','받','고','싶','어','요','아','프','다','고','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'일상 표현', items:['물','한','잔','주','세','요','화','장','실','어','디','예','요','도','와','주','세','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'감정 표현', items:['괜','찮','아','요','힘','들','어','요','좋','아','요','모','르','겠','어','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'위치 표현', items:['여','기','요','저','기','요','앞','으','로','뒤','로','천','천','히','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'숫자 세기', items:['일','이','삼','사','오','육','칠','팔','구','십','열','하','나','둘','셋'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' }
   ]},
-  5: { name:'문장 훈련', bpm:60, mode:'item', beatsPerItem:1, tasks:[
-    { l:'자기 표현', items:['저','는','천','천','히','또','박','또','박','말','할','수','있','습','니','다'], i:'동그라미 하나 = 1초 = 음절 하나. 켜지는 순간 그 음절을 말하세요.' },
-    { l:'병원 문장', items:['오','늘','은','병','원','에','갑','니','다'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' },
-    { l:'일상 문장', items:['오','늘','아','침','에','밥','을','먹','었','습','니','다'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' },
-    { l:'짧은 표현', items:['물','한','잔','주','세','요'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' }
+  5: { name:'문장 훈련', bpm:60, mode:'item', beatsPerItem:1, noShuffle:true, tasks:[
+    { l:'자기 표현', items:['저','는','천','천','히','또','박','또','박','말','할','수','있','습','니','다'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 그 음절을 말하세요.' },
+    { l:'오늘 일정', items:['오','늘','은','병','원','에','가','야','합','니','다'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'아침 인사', items:['좋','은','아','침','입','니','다','오','늘','도','잘','부','탁','드','립','니','다'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'요청 표현', items:['조','금','만','기','다','려','주','세','요','천','천','히','말','씀','해','주','세','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'감사 표현', items:['도','와','주','셔','서','감','사','합','니','다','정','말','고','맙','습','니','다'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'짧은 문장', items:['물','주','세','요','약','주','세','요','배','고','파','요','졸','려','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' }
   ]},
-  6: { name:'대화 훈련', bpm:60, mode:'item', beatsPerItem:1, tasks:[
-    { l:'오늘 기분', items:['오','늘','기','분','은','어','떠','세','요'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' },
-    { l:'아침 식사', items:['오','늘','아','침','에','무','엇','을','드','셨','나','요'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' },
-    { l:'자기 소개', items:['성','함','이','어','떻','게','되','세','요'], i:'동그라미 하나 = 1초. 켜지는 순간 음절 하나씩 말하세요.' }
+  6: { name:'대화 훈련', bpm:60, mode:'item', beatsPerItem:1, noShuffle:true, tasks:[
+    { l:'오늘 기분', items:['오','늘','기','분','은','어','떠','세','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하고, 자신의 기분을 답해보세요.' },
+    { l:'아침 식사', items:['오','늘','아','침','에','무','엇','을','드','셨','나','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'자기 소개', items:['성','함','이','어','떻','게','되','세','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'어디 사세요', items:['어','디','에','사','시','나','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'나이 물어보기', items:['연','세','가','어','떻','게','되','세','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' },
+    { l:'오늘 날씨', items:['오','늘','날','씨','가','어','떤','가','요'], i:'동그라미 하나 = 음절 하나. 켜지는 순간 말하세요.' }
   ]}
 };
 
@@ -493,8 +501,8 @@ function init() {
       b.classList.add('on'); cue = b.dataset.cue;
     });
   });
-  document.getElementById('bpmM').addEventListener('click', function() { setBpm(bpm-1); reMetro(); });
-  document.getElementById('bpmP').addEventListener('click', function() { setBpm(bpm+1); reMetro(); });
+  document.getElementById('bpmM').addEventListener('click', function() { setBpm(bpm-10); reMetro(); });
+  document.getElementById('bpmP').addEventListener('click', function() { setBpm(bpm+10); reMetro(); });
   document.getElementById('bpmSl').addEventListener('input', function(e) { setBpm(parseInt(e.target.value,10)); reMetro(); });
   document.getElementById('tapBtn').addEventListener('click', tap);
   document.getElementById('volSl').addEventListener('input', function(e) { vol = e.target.value/100; });
@@ -589,9 +597,9 @@ function buildMetDots() {
 }
 function onBeat() {
   var acc=(beatN%beats===0); lastBeat=performance.now();
-  // 소리 — 항상 (마이크 여부 무관)
-  if(cue==='audio'||cue==='both') tick(acc);
-  // 진동
+  // 소리 — 항상 남 (cue 무관)
+  tick(acc);
+  // 진동 — 진동 모드일 때 추가
   if(cue==='vibration'||cue==='both') {
     try { if(navigator.vibrate) navigator.vibrate(acc?[80,0]:[30,0]); } catch(e) {}
   }
@@ -611,7 +619,13 @@ function onBeat() {
   beatN++;
   if(sessOn) onSessBeat();
 }
-function setBpm(v) { bpm=Math.max(40,Math.min(160,v)); document.getElementById('bpmNum').textContent=bpm; document.getElementById('bpmSl').value=bpm; }
+function setBpm(v) {
+  // 10단위로 반올림, 60~90 범위
+  var snapped = Math.round(v/10)*10;
+  bpm = Math.max(60, Math.min(90, snapped));
+  document.getElementById('bpmNum').textContent=bpm;
+  document.getElementById('bpmSl').value=bpm;
+}
 function tap() {
   var now=Date.now();
   if(tapTimes.length>0&&now-tapTimes[tapTimes.length-1]>3000) tapTimes=[];
@@ -644,7 +658,7 @@ function loadTask() {
     document.getElementById('beatGuide').style.display='none';
   } else {
     // 4단계 이상은 단어 목록 순서 랜덤, 3단계(음절)는 고정
-    items = (stage>=4) ? shuffle(t.items) : t.items.slice();
+    items = (stage>=4 && !s.noShuffle) ? shuffle(t.items) : t.items.slice();
     // 박자 안내 표시
     var bg=document.getElementById('beatGuide');
     bg.style.display='flex';
@@ -863,8 +877,9 @@ function openWin() {
   winOpen=true; winSound=false; winVolOk=false;
   winOpenTime=performance.now();
   if(winTimer) clearTimeout(winTimer);
-  // 판정창: 박자 켜지는 순간 ±300ms
-  winTimer=setTimeout(function(){closeWin();}, 300);
+  // 판정창: BPM에 맞게 동적으로 (1박의 40%)
+  var winMs = Math.round((60000/bpm) * 0.40);
+  winTimer=setTimeout(function(){closeWin();}, winMs);
 }
 function closeWin() {
   if(!winOpen) return; winOpen=false;
